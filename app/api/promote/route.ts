@@ -1,0 +1,2 @@
+import { NextResponse } from 'next/server';import { supabaseAdmin } from '@/lib/supabase';
+export async function POST(request:Request){const form=await request.formData();const address=String(form.get('address')||'');if(supabaseAdmin&&address){const {data}=await supabaseAdmin.from('tokens').select('promoted').eq('address',address).single();if(data){await supabaseAdmin.from('tokens').update({promoted:!data.promoted}).eq('address',address);}}return NextResponse.redirect(new URL('/admin',request.url));}
