@@ -1,23 +1,37 @@
 create extension if not exists pgcrypto;
 
-create table if not exists public.tokens (
+drop table if exists public.tokens cascade;
+
+create table public.tokens (
   id uuid primary key default gen_random_uuid(),
   name text not null,
-  ticker text not null,
+  symbol text not null,
   address text not null unique,
-  logo_url text,
+  description text not null,
+  logo_url text not null,
   website text,
   telegram text,
   twitter text,
-  description text not null,
-  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
-  listing_tier text not null default 'free' check (listing_tier in ('free', 'fast')),
-  created_at timestamptz not null default now()
+  category text default 'General',
+  listed_at timestamptz not null default now(),
+  promoted boolean not null default false,
+  votes_24h integer not null default 0,
+  votes_all_time integer not null default 0,
+  holders integer,
+  price_usd numeric,
+  market_cap_usd numeric,
+  liquidity_usd numeric,
+  volume_24h_usd numeric,
+  change_24h_percent numeric,
+  chart_url text,
+  status text not null default 'pending_review',
+  listing_tier text not null default 'free',
+  payment_reference text,
+  payment_amount_ton numeric,
+  promotion_duration_days integer
 );
 
 alter table public.tokens enable row level security;
 
-drop policy if exists "public can read approved tokens" on public.tokens;
-create policy "public can read approved tokens"
-  on public.tokens for select
-  using (status = 'approved');
+drop policy if exists "public read approved tokens" on public.tokens;
+create policy "public read approved tokens" on public.tokens for select using (status = 'approved');
