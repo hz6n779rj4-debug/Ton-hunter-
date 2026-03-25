@@ -1,45 +1,45 @@
-import Link from 'next/link';
-import { createClient } from '@supabase/supabase-js';
+import Link from 'next/link'
+import { createClient } from '@supabase/supabase-js'
 
 type SearchParams = {
-  sort?: string;
-};
+  sort?: string
+}
 
 type ExploreProps = {
-  searchParams?: Promise<SearchParams> | SearchParams;
-};
+  searchParams?: SearchParams
+}
 
 type TokenRow = {
-  id: string;
-  name: string;
-  ticker: string | null;
-  address: string;
-  logo_url: string | null;
-  description: string | null;
-  price_usd: number | null;
-  market_cap: number | null;
-  volume_24h: number | null;
-  holders: number | null;
-  votes_24h: number | null;
-  votes_all_time: number | null;
-  status: string | null;
-  featured: boolean | null;
-};
+  id: string
+  name: string
+  ticker: string | null
+  address: string
+  logo_url: string | null
+  description: string | null
+  price_usd: number | null
+  market_cap: number | null
+  volume_24h: number | null
+  holders: number | null
+  votes_24h: number | null
+  votes_all_time: number | null
+  status: string | null
+  featured: boolean | null
+}
 
 function formatNumber(value: number | null | undefined) {
-  if (value === null || value === undefined) return '—';
+  if (value === null || value === undefined) return '—'
   return new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 2,
-  }).format(value);
+  }).format(value)
 }
 
 function formatUsd(value: number | null | undefined) {
-  if (value === null || value === undefined) return '$0.00';
+  if (value === null || value === undefined) return '$0.00'
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 2,
-  }).format(value);
+  }).format(value)
 }
 
 function sortTokens(tokens: TokenRow[], sort: string) {
@@ -47,15 +47,15 @@ function sortTokens(tokens: TokenRow[], sort: string) {
     case 'votes':
       return [...tokens].sort(
         (a, b) => (b.votes_all_time ?? 0) - (a.votes_all_time ?? 0)
-      );
+      )
     case 'gainers':
-      return [...tokens].sort((a, b) => (b.price_usd ?? 0) - (a.price_usd ?? 0));
+      return [...tokens].sort((a, b) => (b.price_usd ?? 0) - (a.price_usd ?? 0))
     case 'holders':
-      return [...tokens].sort((a, b) => (b.holders ?? 0) - (a.holders ?? 0));
+      return [...tokens].sort((a, b) => (b.holders ?? 0) - (a.holders ?? 0))
     default:
       return [...tokens].sort(
         (a, b) => (b.votes_24h ?? 0) - (a.votes_24h ?? 0)
-      );
+      )
   }
 }
 
@@ -64,9 +64,9 @@ function Filter({
   label,
   active,
 }: {
-  href: string;
-  label: string;
-  active: boolean;
+  href: string
+  label: string
+  active: boolean
 }) {
   return (
     <Link
@@ -79,36 +79,31 @@ function Filter({
     >
       {label}
     </Link>
-  );
+  )
 }
 
 export default async function ExplorePage({ searchParams }: ExploreProps) {
-  const resolved =
-    searchParams && typeof (searchParams as Promise<SearchParams>).then === 'function'
-      ? await (searchParams as Promise<SearchParams>)
-      : ((searchParams as SearchParams) ?? {});
+  const sort = searchParams?.sort ?? 'trending'
 
-  const sort = resolved.sort ?? 'trending';
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  let tokens: TokenRow[] = [];
+  let tokens: TokenRow[] = []
 
   if (supabaseUrl && supabaseAnonKey) {
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
     const { data } = await supabase
       .from('tokens')
       .select(
         'id,name,ticker,address,logo_url,description,price_usd,market_cap,volume_24h,holders,votes_24h,votes_all_time,status,featured'
       )
-      .eq('status', 'approved');
+      .eq('status', 'approved')
 
-    tokens = (data as TokenRow[] | null) ?? [];
+    tokens = (data as TokenRow[] | null) ?? []
   }
 
-  const sorted = sortTokens(tokens, sort);
+  const sorted = sortTokens(tokens, sort)
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 text-white">
@@ -139,7 +134,6 @@ export default async function ExplorePage({ searchParams }: ExploreProps) {
             <div className="mb-4 flex items-start gap-4">
               <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-white/5">
                 {token.logo_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={token.logo_url}
                     alt={token.name}
@@ -203,5 +197,5 @@ export default async function ExplorePage({ searchParams }: ExploreProps) {
         </div>
       )}
     </main>
-  );
+  )
 }
