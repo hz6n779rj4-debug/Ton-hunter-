@@ -1,0 +1,1 @@
+import Link from 'next/link';export default function NotFound(){return <section className="container-main py-24 text-center"><h1 className="text-5xl font-bold">404</h1><p className="mt-4 text-slate-400">Token not found.</p><Link href="/explore" className="mt-6 inline-flex rounded-full bg-white px-5 py-3 font-medium text-slate-950">Go back</Link></section>;}
