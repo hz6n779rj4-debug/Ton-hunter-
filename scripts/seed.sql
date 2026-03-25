@@ -1,3 +1,14 @@
-insert into public.tokens (name,symbol,address,description,logo_url,website,telegram,twitter,category,listed_at,promoted,status,listing_tier,approved_at,votes_24h,votes_all_time,holders,price_usd,market_cap_usd,liquidity_usd,volume_24h_usd,change_24h_percent,chart_url)
-values
-('Resistance Dog','REDO','EQBZ_______________________________m4Cko','Resistance Dog ($REDO) is a symbolic TON meme coin tied to digital resistance culture and strong community identity.','/token-placeholder.svg','https://www.redoton.com/home','https://t.me/redotoken','https://x.com/redotoken','Meme',now(),true,'approved','fast',now(),1,1,26100,0,0,0,0,0,'https://www.geckoterminal.com/ton');
+insert into public.tokens (name, ticker, address, logo_url, website, telegram, twitter, description, status, listing_tier)
+values (
+  'Resistance Dog',
+  'REDO',
+  'EQBZ_SAMPLE_REDO_ADDRESS',
+  '/project-placeholder.png',
+  'https://redoton.com/home',
+  'https://t.me/redotoken',
+  'https://x.com/redotoken',
+  'TON-native meme project with community-driven visibility.',
+  'approved',
+  'fast'
+)
+on conflict (address) do nothing;
