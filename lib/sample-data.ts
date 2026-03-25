@@ -7,7 +7,7 @@ export const sampleTokens: ListedToken[] = [
     symbol: 'REDO',
     address: 'EQBZ_...m4Cko',
     description: 'TON-native meme momentum driven by culture, visibility, and community support across the ecosystem.',
-    logo_url: '/tonhunters-logo.jpg',
+    logo_url: '/token-placeholder.svg',
     website: 'https://www.redoton.com/home',
     telegram: 'https://t.me/redotoken',
     twitter: 'https://x.com/redotoken',
