@@ -1,7 +1,5 @@
-export type ListingStatus = 'pending' | 'approved' | 'rejected' | 'pending_payment';
+export type ListingStatus = 'approved' | 'pending_review' | 'payment_pending' | 'rejected';
 export type ListingTier = 'free' | 'fast';
-export type PaymentRequestType = 'listing' | 'promotion';
-export type PaymentRequestStatus = 'pending' | 'paid' | 'expired';
 
 export type ListedToken = {
   id: string;
@@ -27,21 +25,7 @@ export type ListedToken = {
   category?: string;
   status?: ListingStatus;
   listing_tier?: ListingTier;
-  payment_tx_hash?: string;
-  approved_at?: string | null;
-  feature_expires_at?: string | null;
-};
-
-export type PaymentRequest = {
-  id: string;
-  token_address: string;
-  request_type: PaymentRequestType;
-  status: PaymentRequestStatus;
-  amount_ton: number;
-  duration_days?: number | null;
-  payment_reference: string;
-  payment_wallet: string;
-  payment_tx_hash?: string | null;
-  created_at: string;
-  paid_at?: string | null;
+  payment_reference?: string | null;
+  payment_amount_ton?: number | null;
+  promotion_duration_days?: number | null;
 };

@@ -1,30 +1,7 @@
 import { ListedToken } from './types';
-const now = new Date().toISOString();
-export const sampleTokens: ListedToken[] = [
-  {
-    id: '1',
-    name: 'Resistance Dog',
-    symbol: 'REDO',
-    address: 'EQBZ_...m4Cko',
-    description: 'TON-native meme momentum driven by culture, visibility, and community support across the ecosystem.',
-    logo_url: '/token-placeholder.svg',
-    website: 'https://www.redoton.com/home',
-    telegram: 'https://t.me/redotoken',
-    twitter: 'https://x.com/redotoken',
-    listed_at: now,
-    promoted: true,
-    status: 'approved',
-    listing_tier: 'fast',
-    approved_at: now,
-    votes_24h: 188,
-    votes_all_time: 1220,
-    holders: 26100,
-    price_usd: 0,
-    market_cap_usd: 0,
-    liquidity_usd: 0,
-    volume_24h_usd: 0,
-    change_24h_percent: 0,
-    chart_url: 'https://www.geckoterminal.com/ton',
-    category: 'Meme'
-  }
+const now=new Date().toISOString();
+export const sampleTokens: ListedToken[]=[
+{id:'1',name:'Resistance Dog',symbol:'REDO',address:'EQBZ___________________________________m4Cko'.replace(/_/g,'A'),description:'TON-native meme momentum driven by culture, visibility, and community support.',logo_url:'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=300&q=80',website:'https://www.redoton.com/home',telegram:'https://t.me/redotoken',twitter:'https://x.com/redotoken',listed_at:now,promoted:true,votes_24h:188,votes_all_time:1220,holders:26100,price_usd:0.092,market_cap_usd:920000,liquidity_usd:210000,volume_24h_usd:98000,change_24h_percent:18.4,chart_url:'https://www.geckoterminal.com/ton/pools/sample',category:'Meme',status:'approved',listing_tier:'free'},
+{id:'2',name:'SpyTON Hunters',symbol:'HUNT',address:'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c',description:'SpyTON-owned TON listing board for launches, discovery, and promoted visibility.',logo_url:'/tonhunters-logo.jpeg',website:'https://ton.org',telegram:'https://t.me/SpyTonCommunity',twitter:'https://x.com/hubspyton',listed_at:now,promoted:true,votes_24h:121,votes_all_time:884,holders:3200,price_usd:0.011,market_cap_usd:170000,liquidity_usd:69000,volume_24h_usd:24000,change_24h_percent:12.6,chart_url:'https://www.geckoterminal.com/ton/pools/sample2',category:'Launchpad',status:'approved',listing_tier:'fast'},
+{id:'3',name:'TON Capsule',symbol:'CAP',address:'EQCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCT8',description:'Launch support for TON communities that want leaderboard traction and fast visibility.',logo_url:'https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&w=300&q=80',website:'https://ton.org',telegram:'https://t.me/toncoin',twitter:'https://x.com/ton_blockchain',listed_at:now,promoted:false,votes_24h:58,votes_all_time:447,holders:1900,price_usd:0.0079,market_cap_usd:129000,liquidity_usd:52000,volume_24h_usd:18000,change_24h_percent:22.1,chart_url:'https://www.geckoterminal.com/ton/pools/sample3',category:'Culture',status:'approved',listing_tier:'free'}
 ];
