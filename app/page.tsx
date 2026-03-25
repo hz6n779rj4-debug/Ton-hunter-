@@ -1,4 +1,69 @@
-import Link from 'next/link';import { ArrowRight, CircleDollarSign, Rocket, ShieldCheck, TrendingUp, Vote } from 'lucide-react';import { getHomepageData } from '@/lib/ton';import { TokenCard } from '@/components/token-card';import { SectionHeading } from '@/components/section-heading';import { formatCompact, formatUsd } from '@/lib/utils';
-export default async function HomePage(){const {promoted,topVoted,top24h,topGainers,latest,stats}=await getHomepageData();return <div className="bg-hero"><section className="container-main py-14 sm:py-20"><div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center"><div><div className="mb-5 inline-flex rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-2 text-xs uppercase tracking-[0.25em] text-cyan-200">TON token discovery platform</div><h1 className="max-w-4xl text-4xl font-bold leading-tight sm:text-6xl">Discover, vote, and boost the next <span className="gradient-text">TON gem</span>.</h1><p className="mt-5 max-w-2xl text-base text-slate-300 sm:text-lg">Tonhunters is a SolHunters-style launch and discovery board for TON projects with promoted placements, community votes, new listings, top movers, and a clean admin workflow.</p><div className="mt-8 flex flex-wrap gap-3"><Link href="/explore" className="rounded-full bg-white px-6 py-3 font-medium text-slate-950 transition hover:opacity-90">Explore Coins</Link><Link href="/submit" className="rounded-full border border-stroke bg-card px-6 py-3 font-medium transition hover:border-cyan-400/50">Submit your token</Link></div><div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><Feature title="Top voted" icon={<Vote className="h-4 w-4" />} text="24h and all-time leaderboards." /><Feature title="Promoted coins" icon={<Rocket className="h-4 w-4" />} text="Homepage ad-style placements." /><Feature title="24h gainers" icon={<TrendingUp className="h-4 w-4" />} text="Daily movers and momentum." /><Feature title="Review tools" icon={<ShieldCheck className="h-4 w-4" />} text="Approve and manage listings fast." /></div></div><div className="card grid-lines relative overflow-hidden p-5 shadow-soft"><div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-cyan-300/10 to-transparent" /><div className="relative mb-5 flex items-center justify-between"><div><div className="text-xs uppercase tracking-[0.22em] text-cyan-200">Featured board</div><h2 className="mt-1 text-2xl font-semibold">Promoted Coins</h2></div><Link href="/submit" className="text-sm text-cyan-300 hover:text-cyan-200">Boost yours</Link></div><div className="space-y-4">{promoted.map((token,index)=><TokenCard key={token.id} token={token} compact rank={index+1} />)}</div></div></div></section><section className="container-main pb-8"><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><Metric label="Tokens listed" value={formatCompact(stats.totalTokens)} icon={<Rocket className="h-4 w-4" />} /><Metric label="Votes in 24H" value={formatCompact(stats.totalVotes24h)} icon={<Vote className="h-4 w-4" />} /><Metric label="Promoted slots" value={formatCompact(stats.promotedCount)} icon={<ShieldCheck className="h-4 w-4" />} /><Metric label="Tracked market cap" value={formatUsd(stats.totalMarketCap)} icon={<CircleDollarSign className="h-4 w-4" />} /></div></section><section className="container-main py-10"><SectionHeading title="Top Upvoted 24H" subtitle="The most active TON communities on Tonhunters in the last day." action={<Link href="/explore?sort=votes24h" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} /><div className="grid gap-4 lg:grid-cols-3">{top24h.map((token,index)=><TokenCard key={token.id} token={token} rank={index+1} />)}</div></section><section className="container-main py-10"><SectionHeading title="Top Gainers 24H" subtitle="Daily movers ranked by strongest 24-hour performance." action={<Link href="/explore?sort=gainers" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} /><div className="grid gap-4 lg:grid-cols-3">{topGainers.map((token,index)=><TokenCard key={token.id} token={token} rank={index+1} />)}</div></section><section className="container-main py-10"><SectionHeading title="Explore Coins" subtitle="All-time top voted TON projects, displayed in a polished listing board." action={<Link href="/explore" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">Explore coins <ArrowRight className="h-4 w-4" /></Link>} /><div className="grid gap-4 lg:grid-cols-3">{topVoted.map((token,index)=><TokenCard key={token.id} token={token} rank={index+1} />)}</div></section><section className="container-main py-10"><SectionHeading title="Recently Added" subtitle="Fresh projects submitted to the Tonhunters listing board." /><div className="grid gap-4 lg:grid-cols-3">{latest.map((token)=><TokenCard key={token.id} token={token} />)}</div></section></div>;}
-function Feature({title,text,icon}:{title:string;text:string;icon:React.ReactNode}){return <div className="rounded-2xl border border-stroke/70 bg-card/70 p-4"><div className="mb-3 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 p-2 text-cyan-200">{icon}</div><h3 className="font-semibold">{title}</h3><p className="mt-1 text-sm text-slate-400">{text}</p></div>;}
-function Metric({label,value,icon}:{label:string;value:string;icon:React.ReactNode}){return <div className="panel p-5"><div className="mb-3 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 p-2 text-cyan-200">{icon}</div><div className="text-sm text-slate-400">{label}</div><div className="mt-2 text-2xl font-semibold text-white">{value}</div></div>;}
+import Link from 'next/link';
+import { BarChart3, Megaphone, Rocket, ShieldCheck, TrendingUp } from 'lucide-react';
+import { SectionHeading } from '@/components/section-heading';
+import { TokenCard } from '@/components/token-card';
+import { getHomepageData } from '@/lib/ton';
+import { formatCompact, formatUsd } from '@/lib/utils';
+
+export default async function HomePage() {
+  const { promoted, top24h, topGainers, latest, stats } = await getHomepageData();
+
+  return (
+    <section className="container-main py-12">
+      <div className="rounded-[2rem] border border-cyan-400/20 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.14),transparent_45%),linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.96))] p-8 shadow-[0_0_120px_rgba(34,211,238,0.06)] md:p-12">
+        <div className="max-w-4xl">
+          <div className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-xs uppercase tracking-[0.35em] text-cyan-100">SpyTON-owned TON launch board</div>
+          <h1 className="mt-6 max-w-4xl text-4xl font-bold tracking-tight text-white md:text-6xl">Discover, review, and boost the next TON gem.</h1>
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">Tonhunters is the TON-native discovery board from SpyTON. Free listings go under review, fast listings go live after 10 TON payment verification, and paid promotions push projects into the featured board for fixed durations.</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/explore" className="rounded-full bg-white px-6 py-3 font-medium text-slate-950">Explore Coins</Link>
+            <Link href="/submit" className="rounded-full border border-cyan-400/35 bg-cyan-400/10 px-6 py-3 font-medium text-cyan-100">Submit your token</Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <Feature icon={<BarChart3 className="h-5 w-5" />} title="Top voted" text="24h and all-time TON community leaderboards." />
+        <Feature icon={<Megaphone className="h-5 w-5" />} title="Promoted coins" text="Featured placements with 1, 3, and 7 day TON payment options." />
+        <Feature icon={<TrendingUp className="h-5 w-5" />} title="24h gainers" text="Live movers from TON market data when available." />
+        <Feature icon={<ShieldCheck className="h-5 w-5" />} title="Review tools" text="Free listings stay pending until you approve them in the owner panel." />
+      </div>
+
+      <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="Tokens listed" value={formatCompact(stats.totalTokens)} />
+        <StatCard label="24h votes" value={formatCompact(stats.totalVotes24h)} />
+        <StatCard label="Promoted now" value={formatCompact(stats.promotedCount)} />
+        <StatCard label="Tracked market cap" value={formatUsd(stats.totalMarketCap)} />
+      </div>
+
+      <div className="mt-12">
+        <SectionHeading eyebrow="Featured board" title="Promoted Coins" subtitle="Boost a live TON token into the homepage board after payment verification." action={<Link href="/submit" className="text-sm text-cyan-200 hover:text-white">Boost yours</Link>} />
+        <div className="mt-6 grid gap-6 lg:grid-cols-3">{promoted.map((token) => <TokenCard key={token.address} token={token} />)}</div>
+      </div>
+
+      <div className="mt-14 grid gap-12 lg:grid-cols-2">
+        <div>
+          <SectionHeading eyebrow="Top 24h" title="Most voted today" />
+          <div className="mt-6 grid gap-5">{top24h.map((token) => <TokenCard key={token.address} token={token} compact />)}</div>
+        </div>
+        <div>
+          <SectionHeading eyebrow="Momentum" title="24h gainers" />
+          <div className="mt-6 grid gap-5">{topGainers.map((token) => <TokenCard key={token.address} token={token} compact />)}</div>
+        </div>
+      </div>
+
+      <div className="mt-14">
+        <SectionHeading eyebrow="Listing flow" title="Submit → Review → Go live" subtitle="Free listing waits for owner approval. Fast listing and promotion activate after wallet payment is detected." action={<Link href="/admin" className="inline-flex items-center gap-2 text-sm text-cyan-200 hover:text-white"><Rocket className="h-4 w-4" />Owner panel</Link>} />
+        <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">{latest.map((token) => <TokenCard key={token.address} token={token} />)}</div>
+      </div>
+    </section>
+  );
+}
+
+function Feature({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
+  return <div className="card p-6"><div className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 p-3 text-cyan-200">{icon}</div><h3 className="mt-6 text-2xl font-semibold text-white">{title}</h3><p className="mt-3 text-slate-400">{text}</p></div>;
+}
+
+function StatCard({ label, value }: { label: string; value: string }) {
+  return <div className="card p-6"><div className="text-sm uppercase tracking-[0.25em] text-slate-500">{label}</div><div className="mt-3 text-3xl font-bold text-white">{value}</div></div>;
+}
