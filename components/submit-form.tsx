@@ -11,19 +11,16 @@ export function SubmitForm(){
       <Field label="Ticker" name="symbol" placeholder="REDO" required />
     </div>
     <Field label="Token address" name="address" placeholder="EQ..." required />
-    <div className="grid gap-4 md:grid-cols-2">
-      <label className="grid gap-2 text-sm">
-        <span className="text-slate-300">Project logo upload</span>
-        <input name="logo_file" type="file" accept="image/*" className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 outline-none focus:border-cyan-400/50 file:mr-3 file:rounded-full file:border-0 file:bg-cyan-400/15 file:px-3 file:py-2 file:text-cyan-200"
-          onChange={(e)=>{
-            const file=e.target.files?.[0];
-            if(!file){setPreview(null);return;}
-            setPreview(URL.createObjectURL(file));
-          }} />
-        <span className="text-xs text-slate-500">Upload is preferred. The app will try Supabase Storage first, then fall back safely.</span>
-      </label>
-      <Field label="Logo URL fallback" name="logo_url" placeholder="https://..." />
-    </div>
+    <label className="grid gap-2 text-sm">
+      <span className="text-slate-300">Project logo upload</span>
+      <input name="logo_file" type="file" accept="image/*" required className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 outline-none focus:border-cyan-400/50 file:mr-3 file:rounded-full file:border-0 file:bg-cyan-400/15 file:px-3 file:py-2 file:text-cyan-200"
+        onChange={(e)=>{
+          const file=e.target.files?.[0];
+          if(!file){setPreview(null);return;}
+          setPreview(URL.createObjectURL(file));
+        }} />
+      <span className="text-xs text-slate-500">Upload the project logo directly from your device. No logo URL is needed.</span>
+    </label>
     {preview ? <div className="panel flex items-center gap-4 p-4"><img src={preview} alt="Preview" className="h-16 w-16 rounded-2xl object-cover" /><div className="text-sm text-slate-300">Logo preview ready.</div></div> : null}
     <Field label="Website" name="website" placeholder="https://..." />
     <div className="grid gap-4 md:grid-cols-2">
