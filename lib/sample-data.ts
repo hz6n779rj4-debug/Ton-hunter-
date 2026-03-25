@@ -1,9 +1,30 @@
 import { ListedToken } from './types';
-const now=new Date().toISOString();
+const now = new Date().toISOString();
 export const sampleTokens: ListedToken[] = [
-{id:'1',name:'Ton Hunters',symbol:'HUNT',address:'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c',description:'Community-powered discovery token built around voting, launches, and promoted visibility on TON.',logo_url:'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=300&q=80',website:'https://ton.org',telegram:'https://t.me/toncoin',twitter:'https://x.com/ton_blockchain',listed_at:now,promoted:true,votes_24h:188,votes_all_time:1220,holders:8900,price_usd:0.092,market_cap_usd:920000,liquidity_usd:210000,volume_24h_usd:98000,change_24h_percent:18.4,chart_url:'https://www.geckoterminal.com/ton',category:'Launchpad'},
-{id:'2',name:'Ton Meme Labs',symbol:'LABS',address:'EQCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCT8',description:'Meme launch hub for TON communities that want leaderboard traction and fast visibility.',logo_url:'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=300&q=80',website:'https://ton.org',telegram:'https://t.me/toncoin',twitter:'https://x.com/ton_blockchain',listed_at:now,promoted:true,votes_24h:121,votes_all_time:884,holders:3200,price_usd:0.011,market_cap_usd:170000,liquidity_usd:69000,volume_24h_usd:24000,change_24h_percent:12.6,chart_url:'https://www.geckoterminal.com/ton',category:'Meme'},
-{id:'3',name:'JetMint',symbol:'JET',address:'EQDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDQ3',description:'Jetton launch analytics tool with a clean TON-native onboarding flow.',logo_url:'https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=300&q=80',website:'https://ton.org',telegram:'https://t.me/toncoin',twitter:'https://x.com/ton_blockchain',listed_at:now,promoted:false,votes_24h:96,votes_all_time:844,holders:5100,price_usd:0.025,market_cap_usd:430000,liquidity_usd:97000,volume_24h_usd:55000,change_24h_percent:9.8,chart_url:'https://www.geckoterminal.com/ton',category:'Tooling'},
-{id:'4',name:'Orbital Pay',symbol:'ORB',address:'EQEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEx',description:'Payment-focused TON app connecting creators, communities, and on-chain invoicing.',logo_url:'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=300&q=80',website:'https://ton.org',telegram:'https://t.me/toncoin',twitter:'https://x.com/ton_blockchain',listed_at:now,promoted:false,votes_24h:78,votes_all_time:601,holders:2980,price_usd:0.17,market_cap_usd:1450000,liquidity_usd:280000,volume_24h_usd:109000,change_24h_percent:-3.4,chart_url:'https://www.geckoterminal.com/ton',category:'Payments'},
-{id:'5',name:'Pocket DAO',symbol:'PDAO',address:'EQFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFr',description:'TON governance toolkit for mini apps, DAOs, community voting, and proposal gates.',logo_url:'https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&w=300&q=80',website:'https://ton.org',telegram:'https://t.me/toncoin',twitter:'https://x.com/ton_blockchain',listed_at:now,promoted:false,votes_24h:63,votes_all_time:550,holders:4100,price_usd:0.043,market_cap_usd:620000,liquidity_usd:91000,volume_24h_usd:41000,change_24h_percent:5.2,chart_url:'https://www.geckoterminal.com/ton',category:'Governance'},
-{id:'6',name:'Blue Capsule',symbol:'CAP',address:'EQGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGg',description:'A culture token pushing TON art, media drops, and social-first community discovery.',logo_url:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=300&q=80',website:'https://ton.org',telegram:'https://t.me/toncoin',twitter:'https://x.com/ton_blockchain',listed_at:now,promoted:false,votes_24h:58,votes_all_time:447,holders:1900,price_usd:0.0079,market_cap_usd:129000,liquidity_usd:52000,volume_24h_usd:18000,change_24h_percent:22.1,chart_url:'https://www.geckoterminal.com/ton',category:'Culture'}];
+  {
+    id: '1',
+    name: 'Resistance Dog',
+    symbol: 'REDO',
+    address: 'EQBZ_...m4Cko',
+    description: 'TON-native meme momentum driven by culture, visibility, and community support across the ecosystem.',
+    logo_url: '/tonhunters-logo.jpg',
+    website: 'https://www.redoton.com/home',
+    telegram: 'https://t.me/redotoken',
+    twitter: 'https://x.com/redotoken',
+    listed_at: now,
+    promoted: true,
+    status: 'approved',
+    listing_tier: 'fast',
+    approved_at: now,
+    votes_24h: 188,
+    votes_all_time: 1220,
+    holders: 26100,
+    price_usd: 0,
+    market_cap_usd: 0,
+    liquidity_usd: 0,
+    volume_24h_usd: 0,
+    change_24h_percent: 0,
+    chart_url: 'https://www.geckoterminal.com/ton',
+    category: 'Meme'
+  }
+];
