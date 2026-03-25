@@ -1,14 +1,4 @@
-insert into public.tokens (name, ticker, address, logo_url, website, telegram, twitter, description, status, listing_tier)
-values (
-  'Resistance Dog',
-  'REDO',
-  'EQBZ_SAMPLE_REDO_ADDRESS',
-  '/project-placeholder.png',
-  'https://redoton.com/home',
-  'https://t.me/redotoken',
-  'https://x.com/redotoken',
-  'TON-native meme project with community-driven visibility.',
-  'approved',
-  'fast'
-)
-on conflict (address) do nothing;
+insert into public.tokens (name, symbol, address, description, logo_url, website, telegram, twitter, category, promoted, votes_24h, votes_all_time, holders, price_usd, market_cap_usd, liquidity_usd, volume_24h_usd, change_24h_percent, chart_url, status, listing_tier)
+values
+('Resistance Dog', 'REDO', 'EQBZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAm4Cko', 'TON-native meme momentum driven by culture, visibility, and community support.', 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=300&q=80', 'https://www.redoton.com/home', 'https://t.me/redotoken', 'https://x.com/redotoken', 'Meme', true, 188, 1220, 26100, 0.092, 920000, 210000, 98000, 18.4, 'https://www.geckoterminal.com/ton/pools/sample', 'approved', 'free'),
+('SpyTON Hunters', 'HUNT', 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c', 'SpyTON-owned TON listing board for launches, discovery, and promoted visibility.', '/tonhunters-logo.jpeg', 'https://ton.org', 'https://t.me/SpyTonCommunity', 'https://x.com/hubspyton', 'Launchpad', true, 121, 884, 3200, 0.011, 170000, 69000, 24000, 12.6, 'https://www.geckoterminal.com/ton/pools/sample2', 'approved', 'fast');
