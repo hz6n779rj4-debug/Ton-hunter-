@@ -1,6 +1,3 @@
-export type ListingStatus = 'approved' | 'pending_review' | 'payment_pending' | 'rejected';
-export type ListingTier = 'free' | 'fast';
-
 export type ListedToken = {
   id: string;
   name: string;
@@ -11,6 +8,7 @@ export type ListedToken = {
   website?: string;
   telegram?: string;
   twitter?: string;
+  category?: string;
   listed_at: string;
   promoted: boolean;
   votes_24h: number;
@@ -22,10 +20,9 @@ export type ListedToken = {
   volume_24h_usd?: number;
   change_24h_percent?: number;
   chart_url?: string;
-  category?: string;
-  status?: ListingStatus;
-  listing_tier?: ListingTier;
-  payment_reference?: string | null;
-  payment_amount_ton?: number | null;
+  status?: 'pending' | 'approved' | 'rejected';
+  listing_tier?: 'free' | 'fast';
   promotion_duration_days?: number | null;
+  promotion_expires_at?: string | null;
+  payment_reference?: string | null;
 };
