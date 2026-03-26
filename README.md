@@ -1,5 +1,5 @@
-# Tonhunters
-Tonhunters is a TON-focused token discovery site inspired by the structure of SolHunters, with a homepage, listing board, token profile pages, submit flow, and admin dashboard.
+# Ton Gemz
+Ton Gemz is a TON-focused token discovery site inspired by the structure of SolHunters, with a homepage, listing board, token profile pages, submit flow, and admin dashboard.
 
 ## What is included
 - Hero landing page with promoted coins, top upvoted 24H, top gainers 24H, all-time top voted, and recently added sections
