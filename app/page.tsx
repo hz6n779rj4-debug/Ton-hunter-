@@ -6,7 +6,13 @@ import { SectionHeading } from '@/components/section-heading';
 import { formatCompact, formatUsd } from '@/lib/utils';
 
 export default async function HomePage() {
-  const { promoted, topVoted, top24h, topGainers, latest, stats } = await getHomepageData();
+  const { promoted, trending, topVoted, topGainers, latest } = await getHomepageData();
+  const stats = {
+    totalTokens: latest.length + Math.max(topVoted.length - latest.length, 0),
+    totalVotes24h: trending.reduce((sum, token) => sum + (token.votes_24h || 0), 0),
+    promotedCount: promoted.length,
+    totalMarketCap: topVoted.reduce((sum, token) => sum + (token.market_cap_usd || 0), 0),
+  };
 
   return (
     <div className="bg-hero">
@@ -62,8 +68,8 @@ export default async function HomePage() {
       </section>
 
       <section className="container-main py-10">
-        <SectionHeading title="Top Upvoted 24H" subtitle="The most active TON communities on Tonhunters in the last day." action={<Link href="/explore?sort=votes24h" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} />
-        <div className="grid gap-4 lg:grid-cols-3">{top24h.map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div>
+        <SectionHeading title="Trending now" subtitle="Projects with the strongest recent momentum on Tonhunters." action={<Link href="/explore?sort=votes24h" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} />
+        <div className="grid gap-4 lg:grid-cols-3">{trending.slice(0, 3).map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div>
       </section>
 
       <section className="container-main py-10">
