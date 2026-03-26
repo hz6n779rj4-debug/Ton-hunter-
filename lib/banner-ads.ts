@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from 'next/cache';
 import { supabaseAdmin, storageBucket } from './supabase';
 import { BannerAd } from './types';
 
@@ -46,6 +47,7 @@ function resolvePublicImage(imageUrl: string) {
 }
 
 export async function getBannerAds(includeInactive = false): Promise<BannerAd[]> {
+  noStore();
   if (!supabaseAdmin) {
     const sample = sampleBannerAds.map(normalizeBannerAd);
     return includeInactive ? sample : sample.filter(isBannerLive);
@@ -71,8 +73,12 @@ export async function getBannerAds(includeInactive = false): Promise<BannerAd[]>
 }
 
 export async function getPrimaryBannerAd() {
-  const banners = await getBannerAds(false);
-  return banners[0] || null;
+  noStore();
+  const liveBanners = await getBannerAds(false);
+  if (liveBanners[0]) return liveBanners[0];
+
+  const allBanners = await getBannerAds(true);
+  return allBanners.find((banner) => banner.is_active) || null;
 }
 
 export async function uploadBannerImage(file: File) {
