@@ -140,7 +140,8 @@ export default async function AdminPanelPage({
             <div className="mb-3 inline-flex rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-fuchsia-200">Banner ads manager</div>
             <h2 className="text-2xl font-semibold text-white">Publish header banners</h2>
             <p className="mt-2 text-sm text-slate-400">Upload a banner image, add the project link, set start and end dates, then publish. No redeploy needed.</p>
-            <form action="/api/admin/banner/create" method="post" encType="multipart/form-data" className="mt-5 grid gap-4">
+            <form action="/api/admin/banner" method="post" encType="multipart/form-data" className="mt-5 grid gap-4">
+              <input type="hidden" name="action" value="create" />
               <label className="grid gap-2 text-sm">
                 <span className="text-slate-300">Banner title</span>
                 <input name="title" required placeholder="Ton Gemz Launch Banner" className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 outline-none focus:border-cyan-400/50" />
@@ -190,21 +191,25 @@ export default async function AdminPanelPage({
                       </div>
                     </div>
                     <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                      <form action="/api/admin/banner/toggle" method="post">
+                      <form action="/api/admin/banner" method="post">
+                        <input type="hidden" name="action" value="toggle" />
                         <input type="hidden" name="id" value={ad.id} />
                         <button className="w-full rounded-full border border-cyan-500/40 bg-cyan-500/10 px-3 py-2 text-sm text-cyan-300">Turn {ad.is_active ? 'off' : 'on'}</button>
                       </form>
-                      <form action="/api/admin/banner/reorder" method="post">
+                      <form action="/api/admin/banner" method="post">
+                        <input type="hidden" name="action" value="reorder" />
                         <input type="hidden" name="id" value={ad.id} />
                         <input type="hidden" name="direction" value="up" />
                         <button className="w-full rounded-full border border-stroke px-3 py-2 text-sm text-slate-200">Move up</button>
                       </form>
-                      <form action="/api/admin/banner/reorder" method="post">
+                      <form action="/api/admin/banner" method="post">
+                        <input type="hidden" name="action" value="reorder" />
                         <input type="hidden" name="id" value={ad.id} />
                         <input type="hidden" name="direction" value="down" />
                         <button className="w-full rounded-full border border-stroke px-3 py-2 text-sm text-slate-200">Move down</button>
                       </form>
-                      <form action="/api/admin/banner/delete" method="post">
+                      <form action="/api/admin/banner" method="post">
+                        <input type="hidden" name="action" value="delete" />
                         <input type="hidden" name="id" value={ad.id} />
                         <button className="w-full rounded-full border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-300">Delete</button>
                       </form>
