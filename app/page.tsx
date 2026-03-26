@@ -39,7 +39,7 @@ export default async function HomePage() {
               Premium TON exposure for <span className="gradient-text">launches, listings, and boosts</span>.
             </h1>
             <p className="mt-5 max-w-2xl text-base text-slate-300 sm:text-lg">
-              Tonhunters is a SpyTON-owned premium TON board with banner ads, promoted placements, community votes, new listings,
+              Tonhunters is a premium TON board with banner ads, promoted placements, community votes, new listings,
               owner review flow, and live token stats.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -54,7 +54,7 @@ export default async function HomePage() {
               <Feature title="Top voted" icon={<Vote className="h-4 w-4" />} text="24h and all-time leaderboards." />
               <Feature title="Promoted coins" icon={<Rocket className="h-4 w-4" />} text="Homepage ad-style placements." />
               <Feature title="Banner ads" icon={<Megaphone className="h-4 w-4" />} text="Premium header display booking." />
-              <Feature title="Review tools" icon={<ShieldCheck className="h-4 w-4" />} text="Free review or fast-track listing." />
+              <Feature title="Review tools" icon={<ShieldCheck className="h-4 w-4" />} text="Free review and fast-track listing." />
             </div>
           </div>
           <div className="card grid-lines relative overflow-hidden p-5 shadow-soft">
