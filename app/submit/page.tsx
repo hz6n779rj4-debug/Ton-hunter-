@@ -5,7 +5,7 @@ export default function SubmitPage() {
         <div className="card p-6 sm:p-8">
           <div className="mb-3 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-cyan-200">Submit Coin</div>
           <h1 className="text-3xl font-bold">List your TON project</h1>
-          <p className="mt-3 text-slate-400">Add your project to Tonhunters for visibility, community voting, and promoted placement.</p>
+          <p className="mt-3 text-slate-400">Add your project to Ton Gemz for visibility, community voting, and promoted placement.</p>
           <div className="mt-8 space-y-4 text-sm text-slate-300">
             <div className="panel p-4"><div className="font-medium text-white">Free listing</div><p className="mt-1 text-slate-400">Sent for review and approved manually before going live.</p></div>
             <div className="panel p-4"><div className="font-medium text-white">Fast listing</div><p className="mt-1 text-slate-400">10 TON. Submit details, then pay using the reference shown on the next screen.</p></div>
@@ -16,7 +16,7 @@ export default function SubmitPage() {
         <div className="card p-6 sm:p-8">
           <form action="/api/submit" method="post" encType="multipart/form-data" className="grid gap-4">
             <div className="grid gap-4 md:grid-cols-2">
-              <Field label="Project name" name="name" placeholder="Tonhunters" required />
+              <Field label="Project name" name="name" placeholder="Ton Gemz" required />
               <Field label="Ticker" name="symbol" placeholder="HUNT" required />
             </div>
             <Field label="Token address" name="address" placeholder="EQ..." required />
