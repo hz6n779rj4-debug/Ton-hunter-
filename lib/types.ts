@@ -26,3 +26,15 @@ export type ListedToken = {
   promotion_expires_at?: string | null;
   payment_reference?: string | null;
 };
+
+export type BannerAd = {
+  id: string;
+  title: string;
+  image_url: string;
+  target_url: string;
+  is_active: boolean;
+  starts_at: string | null;
+  ends_at: string | null;
+  display_order: number;
+  created_at: string;
+};

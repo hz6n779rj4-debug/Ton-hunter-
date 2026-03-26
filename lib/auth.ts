@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 
-const ADMIN_COOKIE = 'tonhunters_admin';
+const ADMIN_COOKIE = 'tongemz_admin';
 
 export function getAdminSecret() {
   return process.env.ADMIN_SECRET || '';
