@@ -8,9 +8,9 @@ export function Footer() {
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <div className="flex items-center gap-4">
-                <Image src="/tonhunters-logo.jpg" alt="TONHUNTERS" width={72} height={72} className="h-16 w-16 rounded-2xl object-cover" />
+                <Image src="/tongemz-logo.png" alt="Ton Gemz" width={72} height={72} className="h-16 w-16 rounded-2xl object-cover" />
                 <div>
-                  <h2 className="text-3xl font-bold tracking-[0.18em] text-cyan-300 sm:text-5xl">TONHUNTERS</h2>
+                  <h2 className="text-3xl font-bold tracking-[0.18em] text-cyan-300 sm:text-5xl">TON GEMZ</h2>
                   <p className="mt-2 text-base text-slate-400">TON discovery, voting, promoted placements and banner ads.</p>
                 </div>
               </div>

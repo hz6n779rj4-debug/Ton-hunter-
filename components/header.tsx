@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Menu, Search, Shield, Megaphone } from 'lucide-react';
+import { getPrimaryBannerAd } from '@/lib/banner-ads';
 
 const links = [
   { href: '/', label: 'Home' },
@@ -10,30 +11,34 @@ const links = [
   { href: '/admin', label: 'Owner' },
 ];
 
-export function Header() {
+export async function Header() {
+  const bannerAd = await getPrimaryBannerAd();
+  const bannerHref = bannerAd?.target_url || '/banner-ads';
+  const bannerTitle = bannerAd?.title || 'Banner slot available';
+
   return (
     <header className="sticky top-0 z-40 border-b border-stroke/70 bg-[#040814]/92 backdrop-blur-2xl">
       <div className="border-b border-fuchsia-400/20 bg-gradient-to-r from-fuchsia-500/70 via-violet-500/55 to-cyan-400/30">
-        <div className="container-main flex items-center justify-between gap-3 py-2 text-[11px] uppercase tracking-[0.22em] text-white/90 sm:text-xs">
+        <div className="container-main flex items-center justify-between gap-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/90 sm:text-[11px]">
           <Link
-            href="/banner-ads"
-            className="inline-flex items-center gap-2 rounded-full border border-lime-300/35 bg-black/25 px-3 py-1 font-semibold text-lime-200 transition hover:bg-black/35"
+            href={bannerHref}
+            className="inline-flex min-w-0 items-center gap-2 rounded-full border border-lime-300/35 bg-black/25 px-2.5 py-1 font-semibold text-lime-200 transition hover:bg-black/35"
           >
-            <Shield className="h-3.5 w-3.5" />
-            <span className="rounded-md bg-lime-400 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-normal text-slate-950">Ad</span>
-            Banner slot available
+            <Shield className="h-3 w-3" />
+            <span className="rounded-md bg-lime-400 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-normal text-slate-950">Ad</span>
+            <span className="max-w-[42vw] truncate sm:max-w-none">{bannerTitle}</span>
           </Link>
           <Link
             href="/banner-ads"
-            className="inline-flex min-w-24 items-center justify-center rounded-full border border-lime-300/45 bg-lime-400/90 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-slate-950 transition hover:bg-lime-300 sm:min-w-36"
+            className="inline-flex min-w-20 items-center justify-center rounded-full border border-lime-300/45 bg-lime-400/90 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.18em] text-slate-950 transition hover:bg-lime-300 sm:min-w-32"
           >
-            Book banner ad
+            Book banner
           </Link>
         </div>
       </div>
 
       <div className="border-b border-cyan-400/15 bg-black/25">
-        <div className="container-main flex flex-wrap items-center gap-x-6 gap-y-2 py-3 text-sm text-slate-300">
+        <div className="container-main flex flex-wrap items-center gap-x-6 gap-y-2 py-2.5 text-sm text-slate-300">
           <span>Premium TON board</span>
           <span>Projects listed: Live</span>
           <span>Total upvotes: Live</span>
@@ -41,14 +46,14 @@ export function Header() {
         </div>
       </div>
 
-      <div className="container-main py-4">
-        <div className="flex min-h-[88px] items-center justify-between gap-4">
+      <div className="container-main py-3">
+        <div className="flex min-h-[72px] items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3 sm:gap-4">
             <details className="relative md:hidden">
-              <summary className="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-2xl border border-stroke/80 bg-card/70 text-slate-100 marker:content-none">
-                <Menu className="h-6 w-6" />
+              <summary className="flex h-9 w-9 cursor-pointer list-none items-center justify-center rounded-xl border border-stroke/80 bg-card/70 text-slate-100 marker:content-none">
+                <Menu className="h-5 w-5" />
               </summary>
-              <div className="absolute left-0 top-14 w-72 rounded-[24px] border border-stroke bg-[#071325]/95 p-4 shadow-soft backdrop-blur-xl">
+              <div className="absolute left-0 top-12 w-72 rounded-[24px] border border-stroke bg-[#071325]/95 p-4 shadow-soft backdrop-blur-xl">
                 <form action="/explore" method="get" className="mb-4">
                   <div className="flex items-center gap-2 rounded-2xl border border-stroke/80 bg-black/25 px-3 py-2">
                     <Search className="h-4 w-4 text-slate-400" />
@@ -74,12 +79,12 @@ export function Header() {
               </div>
             </details>
 
-            <Link href="/" className="flex min-w-0 items-center gap-3">
+            <Link href="/" className="flex min-w-0 items-center gap-2.5">
               <div className="overflow-hidden rounded-2xl border border-cyan-300/25 shadow-[0_0_32px_rgba(34,211,238,0.18)]">
-                <Image src="/tonhunters-logo.jpg" alt="TONHUNTERS" width={52} height={52} className="h-12 w-12 object-cover sm:h-14 sm:w-14" />
+                <Image src="/tongemz-logo.png" alt="Ton Gemz" width={44} height={44} className="h-10 w-10 object-cover sm:h-11 sm:w-11" />
               </div>
               <div className="min-w-0">
-                <div className="truncate text-xl font-semibold tracking-[0.08em] text-white sm:text-2xl">TONHUNTERS</div>
+                <div className="text-lg font-semibold tracking-[0.06em] text-white sm:text-2xl">TON GEMZ</div>
               </div>
             </Link>
           </div>
@@ -108,9 +113,9 @@ export function Header() {
 
           <Link
             href="/submit"
-            className="rounded-[26px] border border-cyan-400/60 bg-gradient-to-r from-fuchsia-500/15 via-violet-500/10 to-cyan-400/10 px-5 py-3 text-center text-base font-medium text-white shadow-[0_0_24px_rgba(34,211,238,0.12)] transition hover:border-cyan-300/80 hover:bg-cyan-400/10"
+            className="rounded-[22px] border border-cyan-400/60 bg-gradient-to-r from-fuchsia-500/15 via-violet-500/10 to-cyan-400/10 px-4 py-2.5 text-center text-sm font-medium text-white shadow-[0_0_24px_rgba(34,211,238,0.12)] transition hover:border-cyan-300/80 hover:bg-cyan-400/10 sm:px-5 sm:py-3 sm:text-base"
           >
-            Submit Coin
+            Submit
           </Link>
         </div>
       </div>
