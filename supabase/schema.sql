@@ -1,8 +1,6 @@
 create extension if not exists pgcrypto;
 
-drop table if exists public.tokens cascade;
-
-create table public.tokens (
+create table if not exists public.tokens (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   symbol text not null,
@@ -24,11 +22,11 @@ create table public.tokens (
   volume_24h_usd numeric,
   change_24h_percent numeric,
   chart_url text,
-  status text not null default 'pending_review',
+  status text not null default 'pending',
   listing_tier text not null default 'free',
-  payment_reference text,
-  payment_amount_ton numeric,
-  promotion_duration_days integer
+  promotion_duration_days integer,
+  promotion_expires_at timestamptz,
+  payment_reference text
 );
 
 alter table public.tokens enable row level security;
