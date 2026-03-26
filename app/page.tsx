@@ -1,4 +1,5 @@
 import Link from 'next/link';
+export const dynamic = 'force-dynamic';
 import Image from 'next/image';
 import { ArrowRight, CircleDollarSign, Rocket, ShieldCheck, Vote, Megaphone } from 'lucide-react';
 import { getHomepageData } from '@/lib/ton';
