@@ -1,12 +1,15 @@
 import Link from 'next/link';
-import { ArrowRight, CircleDollarSign, Rocket, ShieldCheck, TrendingUp, Vote, Megaphone } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight, CircleDollarSign, Rocket, ShieldCheck, Vote, Megaphone } from 'lucide-react';
 import { getHomepageData } from '@/lib/ton';
+import { getPrimaryBannerAd } from '@/lib/banner-ads';
 import { TokenCard } from '@/components/token-card';
 import { SectionHeading } from '@/components/section-heading';
 import { formatCompact, formatUsd } from '@/lib/utils';
 
 export default async function HomePage() {
   const { promoted, trending, topVoted, topGainers, latest } = await getHomepageData();
+  const bannerAd = await getPrimaryBannerAd();
   const stats = {
     totalTokens: latest.length + Math.max(topVoted.length - latest.length, 0),
     totalVotes24h: trending.reduce((sum, token) => sum + (token.votes_24h || 0), 0),
@@ -17,16 +20,23 @@ export default async function HomePage() {
   return (
     <div className="bg-hero">
       <section className="container-main py-12 sm:py-16">
-        <div className="mb-8 rounded-[30px] border border-fuchsia-400/25 bg-gradient-to-r from-fuchsia-500/20 via-violet-500/15 to-cyan-400/15 p-5 shadow-soft backdrop-blur">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
+        <div className="mb-8 overflow-hidden rounded-[30px] border border-fuchsia-400/25 bg-gradient-to-r from-fuchsia-500/20 via-violet-500/15 to-cyan-400/15 shadow-soft backdrop-blur">
+          <div className="flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between">
+            <div className="min-w-0 flex-1">
               <div className="inline-flex items-center gap-2 rounded-full border border-lime-300/40 bg-lime-400/10 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-lime-200">
                 <Megaphone className="h-3.5 w-3.5" /> Banner ad slot
               </div>
-              <h2 className="mt-3 text-2xl font-bold text-white sm:text-3xl">Premium header banner placement</h2>
-              <p className="mt-2 max-w-2xl text-slate-200/85">Want your project shown at the top of Tonhunters? Book the main banner area for launch pushes, boosts, and ecosystem campaigns.</p>
+              <h2 className="mt-3 text-2xl font-bold text-white sm:text-3xl">{bannerAd?.title || 'Premium header banner placement'}</h2>
+              <p className="mt-2 max-w-2xl text-slate-200/85">Want your project shown at the top of Ton Gemz? Book the main banner area for launch pushes, boosts, and ecosystem campaigns.</p>
             </div>
-            <Link href="/banner-ads" className="rounded-full bg-white px-5 py-3 text-center font-semibold text-slate-950 shadow-lg shadow-black/20">Book banner ad</Link>
+            {bannerAd ? (
+              <a href={bannerAd.target_url} className="flex items-center gap-3 rounded-[24px] border border-white/10 bg-black/25 p-3 pr-4">
+                <Image src={bannerAd.image_url} alt={bannerAd.title} width={108} height={48} className="h-12 w-24 rounded-xl object-cover" unoptimized />
+                <span className="rounded-full bg-white px-5 py-3 text-center font-semibold text-slate-950 shadow-lg shadow-black/20">Open banner</span>
+              </a>
+            ) : (
+              <Link href="/banner-ads" className="rounded-full bg-white px-5 py-3 text-center font-semibold text-slate-950 shadow-lg shadow-black/20">Book banner ad</Link>
+            )}
           </div>
         </div>
 
@@ -39,7 +49,7 @@ export default async function HomePage() {
               Premium TON exposure for <span className="gradient-text">launches, listings, and boosts</span>.
             </h1>
             <p className="mt-5 max-w-2xl text-base text-slate-300 sm:text-lg">
-              Tonhunters is a premium TON board with banner ads, promoted placements, community votes, new listings,
+              Ton Gemz is a premium TON board with banner ads, promoted placements, community votes, new listings,
               owner review flow, and live token stats.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -81,17 +91,17 @@ export default async function HomePage() {
       </section>
 
       <section className="container-main py-10">
-        <SectionHeading title="Boosted" subtitle="Top premium placements currently active on Tonhunters." action={<Link href="/banner-ads" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">Your coin here? <ArrowRight className="h-4 w-4" /></Link>} />
+        <SectionHeading title="Boosted" subtitle="Top premium placements currently active on Ton Gemz." action={<Link href="/banner-ads" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">Your coin here? <ArrowRight className="h-4 w-4" /></Link>} />
         <div className="grid gap-4 lg:grid-cols-3">{promoted.slice(0, 3).map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div>
       </section>
 
       <section className="container-main py-10">
-        <SectionHeading title="Recently Added" subtitle="Fresh projects submitted to the Tonhunters listing board." />
+        <SectionHeading title="Recently Added" subtitle="Fresh projects submitted to the Ton Gemz listing board." />
         <div className="grid gap-4 lg:grid-cols-3">{latest.map((token) => <TokenCard key={token.id} token={token} />)}</div>
       </section>
 
       <section className="container-main py-10">
-        <SectionHeading title="Trending now" subtitle="Projects with the strongest recent momentum on Tonhunters." action={<Link href="/explore?sort=votes24h" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} />
+        <SectionHeading title="Trending now" subtitle="Projects with the strongest recent momentum on Ton Gemz." action={<Link href="/explore?sort=votes24h" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} />
         <div className="grid gap-4 lg:grid-cols-3">{trending.slice(0, 3).map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div>
       </section>
 
