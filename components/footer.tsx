@@ -6,12 +6,12 @@ export function Footer() {
       <div className="container-main">
         <div className="rounded-[32px] border border-stroke/70 bg-card/60 p-8 shadow-soft backdrop-blur-xl">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-            <div>
+            <div className="max-w-2xl">
               <div className="flex items-center gap-4">
-                <Image src="/tonhunters-logo.jpg" alt="Tonhunters" width={72} height={72} className="h-16 w-16 rounded-2xl object-cover" />
+                <Image src="/tonhunters-logo.jpg" alt="TONHUNTERS" width={72} height={72} className="h-16 w-16 rounded-2xl object-cover" />
                 <div>
-                  <h2 className="text-4xl font-bold tracking-[0.18em] text-cyan-300 sm:text-5xl">TONHUNTERS</h2>
-                  <p className="mt-2 text-base text-slate-400">SpyTON-owned TON discovery, voting and premium ad board.</p>
+                  <h2 className="text-3xl font-bold tracking-[0.18em] text-cyan-300 sm:text-5xl">TONHUNTERS</h2>
+                  <p className="mt-2 text-base text-slate-400">TON discovery, voting, promoted placements and banner ads.</p>
                 </div>
               </div>
             </div>
