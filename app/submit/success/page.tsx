@@ -1,4 +1,40 @@
-import Link from 'next/link';
-const wallet='UQDQ-Bp7EiOZevivYISInOTR2wZnwxowRMm-1QJFQGYCutEa';
-export default async function SubmitSuccess({searchParams}:{searchParams?:Promise<{tier?:string;ref?:string}>}){const params=await searchParams;const tier=params?.tier||'free';const ref=params?.ref||'';const paid=tier==='fast';return <section className="container-main py-16"><div className="mx-auto max-w-3xl card p-8"><h1 className="text-3xl font-bold">Submission received</h1><p className="mt-3 text-slate-300">{paid?'Your fast-list request is saved. Use the wallet and reference below, then tell admin after payment so approval can be completed.':'Your token is now under review. It will appear after approval.'}</p>{paid&&<div className="mt-6 grid gap-4 md:grid-cols-2"><Info label="Amount" value="10 TON" /><Info label="Wallet" value={wallet} /><Info label="Reference" value={ref} /><Info label="Status" value="Waiting for payment review" /></div>}<div className="mt-8 flex flex-wrap gap-3"><Link href="/explore" className="rounded-full bg-white px-5 py-3 font-medium text-slate-950">Back to explore</Link><Link href="https://t.me/DevAtSpyTON" target="_blank" className="rounded-full border border-stroke px-5 py-3 font-medium hover:border-cyan-400/40">Contact support</Link></div></div></section>;}
-function Info({label,value}:{label:string;value:string}){return <div className="panel p-4"><div className="text-xs uppercase tracking-[0.18em] text-slate-500">{label}</div><div className="mt-2 break-all font-medium text-white">{value}</div></div>;}
+import Link from 'next/link'
+
+export const dynamic = 'force-dynamic'
+
+export default function SubmitSuccessPage() {
+  return (
+    <main className="mx-auto max-w-3xl px-4 py-10 text-white">
+      <div className="rounded-[28px] border border-cyan-500/20 bg-[#05122b] p-6 md:p-8">
+        <p className="mb-3 inline-flex rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-xs uppercase tracking-[0.3em] text-cyan-300">
+          Submission received
+        </p>
+
+        <h1 className="text-4xl font-semibold">Your listing has been submitted</h1>
+
+        <p className="mt-4 text-white/70">
+          Your token was submitted successfully. Free listings stay pending until they are reviewed and approved.
+        </p>
+
+        <div className="mt-8 grid gap-4 md:grid-cols-1">
+          <div className="rounded-2xl border border-white/10 p-4">
+            <p className="text-xs uppercase tracking-[0.25em] text-white/40">Status</p>
+            <p className="mt-2 text-2xl font-semibold">Pending review</p>
+          </div>
+        </div>
+
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link href="/explore" className="rounded-full bg-white px-6 py-3 text-black">
+            Explore coins
+          </Link>
+          <Link
+            href="/"
+            className="rounded-full border border-cyan-400/40 px-6 py-3 text-cyan-300"
+          >
+            Back home
+          </Link>
+        </div>
+      </div>
+    </main>
+  )
+}
