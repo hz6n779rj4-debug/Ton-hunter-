@@ -1,76 +1,59 @@
+import { randomUUID } from 'crypto';
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
-import { PAYMENT_WALLET, createPaymentReference } from '@/lib/payment';
+import { storageBucket, supabaseAdmin } from '@/lib/supabase';
 
-async function fileToDataUrl(file: File) {
-  const buffer = Buffer.from(await file.arrayBuffer());
-  return `data:${file.type || 'image/png'};base64,${buffer.toString('base64')}`;
-}
+export const runtime = 'nodejs';
 
-async function uploadLogo(file: File) {
-  const bucket = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET || 'token-logos';
-  if (!supabaseAdmin) return fileToDataUrl(file);
+const PAYMENT_WALLET = process.env.NEXT_PUBLIC_PAYMENT_WALLET || 'UQDQ-Bp7EiOZevivYISInOTR2wZnwxowRMm-1QJFQGYCutEa';
 
-  const path = `logos/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
-  const upload = await supabaseAdmin.storage.from(bucket).upload(path, file, {
-    upsert: true,
-    contentType: file.type || 'image/png',
-  });
+export async function POST(request: Request) {
+  const form = await request.formData();
+  const logo = form.get('logo');
+  const listingTier = String(form.get('listing_tier') || 'free') as 'free' | 'fast';
+  const paymentReference = `TH-${randomUUID().slice(0, 8).toUpperCase()}`;
 
-  if (upload.error) {
-    return fileToDataUrl(file);
-  }
-
-  const { data } = supabaseAdmin.storage.from(bucket).getPublicUrl(path);
-  return data.publicUrl;
-}
-
-export async function POST(request:Request){
-  const form=await request.formData();
-  const listingTier = String(form.get('listing_tier') || 'free') === 'fast' ? 'fast' : 'free';
-  const logoFile = form.get('logo_file');
-  let logoUrl = String(form.get('logo_url') || '');
-  if (logoFile instanceof File && logoFile.size > 0) {
-    logoUrl = await uploadLogo(logoFile);
-  }
-
-  const address=String(form.get('address')||'');
-  const isFast = listingTier === 'fast';
-  const now = new Date().toISOString();
-  const payload={
-    name:String(form.get('name')||''),
-    symbol:String(form.get('symbol')||'').replace(/^\$/,''),
-    address,
-    logo_url:logoUrl || '/tonhunters-logo.jpg',
-    website:String(form.get('website')||''),
-    telegram:String(form.get('telegram')||''),
-    twitter:String(form.get('twitter')||''),
-    description:String(form.get('description')||''),
-    listed_at:now,
-    promoted:false,
-    status:isFast?'pending_payment':'pending',
-    listing_tier:listingTier,
-    approved_at:null,
-    votes_24h:0,
-    votes_all_time:0,
-  };
-
-  if(supabaseAdmin){
-    await supabaseAdmin.from('tokens').upsert(payload, { onConflict: 'address' });
-    if (isFast) {
-      const reference = createPaymentReference('LST');
-      await supabaseAdmin.from('payment_requests').insert({
-        token_address: address,
-        request_type: 'listing',
-        status: 'pending',
-        amount_ton: 10,
-        payment_reference: reference,
-        payment_wallet: PAYMENT_WALLET,
-        created_at: now,
+  let logoPath = '/placeholder-token.png';
+  if (logo instanceof File && supabaseAdmin) {
+    try {
+      const ext = (logo.name.split('.').pop() || 'png').toLowerCase();
+      const fileName = `${Date.now()}-${randomUUID()}.${ext}`;
+      const arrayBuffer = await logo.arrayBuffer();
+      const { error } = await supabaseAdmin.storage.from(storageBucket).upload(fileName, Buffer.from(arrayBuffer), {
+        contentType: logo.type || 'image/png',
+        upsert: false,
       });
-      return NextResponse.redirect(new URL(`/pay/${reference}`,request.url));
+      if (!error) logoPath = fileName;
+    } catch {
+      logoPath = '/placeholder-token.png';
     }
   }
 
-  return NextResponse.redirect(new URL('/admin?tab=pending',request.url));
+  const payload = {
+    name: String(form.get('name') || ''),
+    symbol: String(form.get('symbol') || ''),
+    address: String(form.get('address') || ''),
+    logo_url: logoPath,
+    website: String(form.get('website') || ''),
+    telegram: String(form.get('telegram') || ''),
+    twitter: String(form.get('twitter') || ''),
+    description: String(form.get('description') || ''),
+    listed_at: new Date().toISOString(),
+    promoted: false,
+    votes_24h: 0,
+    votes_all_time: 0,
+    listing_tier: listingTier,
+    status: 'pending',
+    payment_reference: paymentReference,
+  };
+
+  if (supabaseAdmin) {
+    await supabaseAdmin.from('tokens').insert(payload);
+  }
+
+  const redirectUrl = new URL('/submit/success', request.url);
+  redirectUrl.searchParams.set('tier', listingTier);
+  redirectUrl.searchParams.set('ref', paymentReference);
+  redirectUrl.searchParams.set('wallet', PAYMENT_WALLET);
+  redirectUrl.searchParams.set('address', payload.address);
+  return NextResponse.redirect(redirectUrl, 303);
 }
