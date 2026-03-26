@@ -1,4 +1,93 @@
-import Link from 'next/link';import { CircleDollarSign, Rocket, ShieldCheck, TrendingUp, Vote } from 'lucide-react';import { getHomepageData } from '@/lib/ton';import { TokenCard } from '@/components/token-card';import { SectionHeading } from '@/components/section-heading';import { formatCompact, formatUsd } from '@/lib/utils';
-export default async function HomePage(){const {promoted,topVoted,top24h,topGainers,latest,stats}=await getHomepageData();return <div className="bg-hero"><section className="container-main py-14 sm:py-20"><div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center"><div><div className="mb-5 inline-flex rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-2 text-xs uppercase tracking-[0.25em] text-cyan-200">TON token discovery platform</div><h1 className="max-w-4xl text-4xl font-bold leading-tight sm:text-6xl">Discover, vote, and boost the next <span className="gradient-text">TON gem</span>.</h1><p className="mt-5 max-w-2xl text-base text-slate-300 sm:text-lg">Tonhunters is SpyTON&apos;s TON listing board for project discovery, community votes, featured placements, and manual review before launch.</p><div className="mt-8 flex flex-wrap gap-3"><Link href="/explore" className="rounded-full bg-white px-6 py-3 font-medium text-slate-950">Explore Coins</Link><Link href="/submit" className="rounded-full border border-stroke px-6 py-3 font-medium text-white hover:border-cyan-400/40">Submit your token</Link></div><div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><Mini icon={<Vote className="h-4 w-4" />} title="Top voted" desc="24h and all-time leaderboards." /><Mini icon={<Rocket className="h-4 w-4" />} title="Promoted coins" desc="Homepage featured placements." /><Mini icon={<TrendingUp className="h-4 w-4" />} title="24h gainers" desc="Daily movers and momentum." /><Mini icon={<ShieldCheck className="h-4 w-4" />} title="Review tools" desc="Approve and manage listings fast." /></div></div><div className="card grid-lines overflow-hidden p-6"><div className="mb-4 flex items-center justify-between"><div><div className="text-xs uppercase tracking-[0.28em] text-cyan-200">Featured board</div><h2 className="mt-2 text-3xl font-semibold">Promoted Coins</h2></div><Link href="/promote" className="text-cyan-300 hover:text-cyan-200">Boost yours</Link></div><div className="grid gap-4">{promoted.slice(0,2).map((token,index)=><TokenCard key={token.id} token={token} compact rank={index+1} />)}</div></div></div><div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4"><StatCard label="Tokens listed" value={formatCompact(stats.totalTokens)} icon={<Rocket className="h-4 w-4" />} /><StatCard label="Votes in 24h" value={formatCompact(stats.totalVotes24h)} icon={<Vote className="h-4 w-4" />} /><StatCard label="Promoted now" value={formatCompact(stats.promotedCount)} icon={<CircleDollarSign className="h-4 w-4" />} /><StatCard label="Tracked market cap" value={formatUsd(stats.totalMarketCap)} icon={<TrendingUp className="h-4 w-4" />} /></div></section><section className="container-main py-8"><SectionHeading title="Top voted this week" subtitle="Community favorites climbing the TON board." action={<Link href="/explore" className="text-sm text-cyan-300 hover:text-cyan-200">See all</Link>} /><div className="grid gap-4 lg:grid-cols-3">{topVoted.slice(0,3).map((token,index)=><TokenCard key={token.id} token={token} rank={index+1} />)}</div></section><section className="container-main py-8"><SectionHeading title="24h top voted" subtitle="Who is getting the most attention today." /><div className="grid gap-4 lg:grid-cols-3">{top24h.slice(0,3).map((token,index)=><TokenCard key={token.id} token={token} rank={index+1} />)}</div></section><section className="container-main py-8"><SectionHeading title="24h gainers" subtitle="Live market momentum from TON API sources when available." /><div className="grid gap-4 lg:grid-cols-3">{topGainers.slice(0,3).map((token,index)=><TokenCard key={token.id} token={token} rank={index+1} />)}</div></section><section className="container-main py-8"><SectionHeading title="Recently approved" subtitle="Fresh listings that made it through review." /><div className="grid gap-4 lg:grid-cols-3">{latest.slice(0,3).map((token,index)=><TokenCard key={token.id} token={token} rank={index+1} />)}</div></section></div>;}
-function StatCard({label,value,icon}:{label:string;value:string;icon:React.ReactNode}){return <div className="card p-5"><div className="mb-3 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 p-2 text-cyan-200">{icon}</div><div className="text-sm text-slate-400">{label}</div><div className="mt-2 text-3xl font-semibold text-white">{value}</div></div>;}
-function Mini({title,desc,icon}:{title:string;desc:string;icon:React.ReactNode}){return <div className="panel p-4"><div className="mb-4 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 p-2 text-cyan-200">{icon}</div><div className="text-2xl font-semibold">{title}</div><div className="mt-2 text-slate-400">{desc}</div></div>;}
+import Link from 'next/link';
+import { ArrowRight, CircleDollarSign, Rocket, ShieldCheck, TrendingUp, Vote } from 'lucide-react';
+import { getHomepageData } from '@/lib/ton';
+import { TokenCard } from '@/components/token-card';
+import { SectionHeading } from '@/components/section-heading';
+import { formatCompact, formatUsd } from '@/lib/utils';
+
+export default async function HomePage() {
+  const { promoted, topVoted, top24h, topGainers, latest, stats } = await getHomepageData();
+
+  return (
+    <div className="bg-hero">
+      <section className="container-main py-14 sm:py-20">
+        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+          <div>
+            <div className="mb-5 inline-flex rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-2 text-xs uppercase tracking-[0.25em] text-cyan-200">
+              TON token discovery platform
+            </div>
+            <h1 className="max-w-4xl text-4xl font-bold leading-tight sm:text-6xl">
+              Discover, vote, and boost the next <span className="gradient-text">TON gem</span>.
+            </h1>
+            <p className="mt-5 max-w-2xl text-base text-slate-300 sm:text-lg">
+              Tonhunters is a SpyTON-owned TON launch and discovery board with promoted placements, community votes, new listings,
+              review flow, and live token stats.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/explore" className="rounded-full bg-white px-6 py-3 font-medium text-slate-950 transition hover:opacity-90">
+                Explore Coins
+              </Link>
+              <Link href="/submit" className="rounded-full border border-stroke bg-card px-6 py-3 font-medium transition hover:border-cyan-400/50">
+                Submit your token
+              </Link>
+            </div>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <Feature title="Top voted" icon={<Vote className="h-4 w-4" />} text="24h and all-time leaderboards." />
+              <Feature title="Promoted coins" icon={<Rocket className="h-4 w-4" />} text="Homepage ad-style placements." />
+              <Feature title="24h gainers" icon={<TrendingUp className="h-4 w-4" />} text="Daily movers and momentum." />
+              <Feature title="Review tools" icon={<ShieldCheck className="h-4 w-4" />} text="Free review or fast-track listing." />
+            </div>
+          </div>
+          <div className="card grid-lines relative overflow-hidden p-5 shadow-soft">
+            <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-cyan-300/10 to-transparent" />
+            <div className="relative mb-5 flex items-center justify-between">
+              <div>
+                <div className="text-xs uppercase tracking-[0.22em] text-cyan-200">Featured board</div>
+                <h2 className="mt-1 text-2xl font-semibold">Promoted Coins</h2>
+              </div>
+              <Link href="/submit" className="text-sm text-cyan-300 hover:text-cyan-200">Boost yours</Link>
+            </div>
+            <div className="space-y-4">{promoted.map((token, index) => <TokenCard key={token.id} token={token} compact rank={index + 1} />)}</div>
+          </div>
+        </div>
+      </section>
+
+      <section className="container-main pb-8">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <Metric label="Tokens listed" value={formatCompact(stats.totalTokens)} icon={<Rocket className="h-4 w-4" />} />
+          <Metric label="Votes in 24H" value={formatCompact(stats.totalVotes24h)} icon={<Vote className="h-4 w-4" />} />
+          <Metric label="Promoted slots" value={formatCompact(stats.promotedCount)} icon={<ShieldCheck className="h-4 w-4" />} />
+          <Metric label="Tracked market cap" value={formatUsd(stats.totalMarketCap)} icon={<CircleDollarSign className="h-4 w-4" />} />
+        </div>
+      </section>
+
+      <section className="container-main py-10">
+        <SectionHeading title="Top Upvoted 24H" subtitle="The most active TON communities on Tonhunters in the last day." action={<Link href="/explore?sort=votes24h" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} />
+        <div className="grid gap-4 lg:grid-cols-3">{top24h.map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div>
+      </section>
+
+      <section className="container-main py-10">
+        <SectionHeading title="Top Gainers 24H" subtitle="Daily movers ranked by strongest 24-hour performance." action={<Link href="/explore?sort=gainers" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} />
+        <div className="grid gap-4 lg:grid-cols-3">{topGainers.map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div>
+      </section>
+
+      <section className="container-main py-10">
+        <SectionHeading title="Explore Coins" subtitle="All-time top voted TON projects, displayed in a polished listing board." action={<Link href="/explore" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">Explore coins <ArrowRight className="h-4 w-4" /></Link>} />
+        <div className="grid gap-4 lg:grid-cols-3">{topVoted.map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div>
+      </section>
+
+      <section className="container-main py-10">
+        <SectionHeading title="Recently Added" subtitle="Fresh projects submitted to the Tonhunters listing board." />
+        <div className="grid gap-4 lg:grid-cols-3">{latest.map((token) => <TokenCard key={token.id} token={token} />)}</div>
+      </section>
+    </div>
+  );
+}
+
+function Feature({ title, text, icon }: { title: string; text: string; icon: React.ReactNode }) {
+  return <div className="rounded-2xl border border-stroke/70 bg-card/70 p-4"><div className="mb-3 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 p-2 text-cyan-200">{icon}</div><h3 className="font-semibold">{title}</h3><p className="mt-1 text-sm text-slate-400">{text}</p></div>;
+}
+
+function Metric({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
+  return <div className="panel p-5"><div className="mb-3 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 p-2 text-cyan-200">{icon}</div><div className="text-sm text-slate-400">{label}</div><div className="mt-2 text-2xl font-semibold text-white">{value}</div></div>;
+}
