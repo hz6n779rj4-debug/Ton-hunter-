@@ -15,9 +15,6 @@ export function TokenCard({ token, compact = false, rank }: { token: ListedToken
             src={logoSrc}
             alt={token.name}
             className="h-14 w-14 rounded-2xl object-cover border border-stroke/70 bg-slate-950/40"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = '/placeholder-token.png';
-            }}
           />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
