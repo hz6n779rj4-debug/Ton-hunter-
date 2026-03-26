@@ -17,11 +17,11 @@ export default function BannerAdsPage() {
           </div>
           <h1 className="text-4xl font-bold text-white">Book a premium banner slot</h1>
           <p className="mt-4 text-slate-300">
-            Put your project directly inside the Tonhunters header banner area and drive instant visibility to your token, portal, or campaign.
+            Put your project directly inside the Ton Gemz header banner area and drive instant visibility to your token, portal, or campaign.
           </p>
           <div className="mt-8 space-y-4">
             <Benefit icon={<Megaphone className="h-5 w-5" />} title="Top-of-site exposure" text="Visible before users even reach the listings board." />
-            <Benefit icon={<Sparkles className="h-5 w-5" />} title="Premium neon placement" text="Styled for the premium SolHunters-style layout you asked for." />
+            <Benefit icon={<Sparkles className="h-5 w-5" />} title="Premium neon placement" text="Styled for a clean premium layout built for TON launches." />
             <Benefit icon={<Gem className="h-5 w-5" />} title="Fits launches and boosts" text="Use it for launches, event pushes, portal links, and ecosystem visibility." />
           </div>
         </div>
@@ -40,7 +40,7 @@ export default function BannerAdsPage() {
           <div className="mt-7 rounded-[28px] border border-fuchsia-400/20 bg-gradient-to-r from-fuchsia-500/10 via-violet-500/10 to-cyan-400/10 p-6">
             <div className="text-sm uppercase tracking-[0.24em] text-slate-400">How to book</div>
             <p className="mt-3 text-slate-200">
-              Submit your project first, then contact SpyTON support with your banner creative and preferred duration. Banner ad approval is handled by the owner after payment confirmation.
+              Submit your project first, then contact support with your banner creative and preferred duration. Banner ad approval is handled by the owner after payment confirmation.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <a href="https://t.me/DevAtSpyTON" className="rounded-full bg-white px-5 py-3 font-medium text-slate-950">Contact support</a>
