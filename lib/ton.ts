@@ -4,6 +4,7 @@ import { ListedToken } from './types';
 
 const TONAPI_BASE = process.env.TONAPI_BASE_URL || 'https://tonapi.io/v2';
 const STON_API_BASE = process.env.STON_API_BASE_URL || 'https://api.ston.fi/v1';
+const DEXSCREENER_BASE = process.env.DEXSCREENER_BASE_URL || 'https://api.dexscreener.com/latest/dex';
 
 const headers = (): HeadersInit => {
   const token = process.env.TONAPI_KEY;
@@ -42,31 +43,44 @@ function normalizeToken(token: Partial<ListedToken>): ListedToken {
 }
 
 async function getDbTokens(includePending = false): Promise<ListedToken[]> {
-  if (!supabaseAdmin) return sampleTokens.map(normalizeToken);
+  if (!supabaseAdmin) {
+    return includePending ? [] : sampleTokens.map(normalizeToken);
+  }
 
   let query = supabaseAdmin.from('tokens').select('*').order('promoted', { ascending: false }).order('votes_24h', { ascending: false });
   if (!includePending) query = query.eq('status', 'approved');
 
   const { data, error } = await query;
-  if (error || !data?.length) return sampleTokens.map(normalizeToken);
+  if (error) return includePending ? [] : sampleTokens.map(normalizeToken);
+  if (!data?.length) return [];
   return data.map((item) => normalizeToken(item as Partial<ListedToken>));
 }
 
 async function enrichToken(token: ListedToken): Promise<ListedToken> {
   try {
-    const [jetton, market] = await Promise.all([
+    const [jetton, market, dex] = await Promise.all([
       fetch(`${TONAPI_BASE}/jettons/${token.address}`, { headers: headers(), next: { revalidate: 180 } }),
       fetch(`${STON_API_BASE}/assets/${token.address}`, { next: { revalidate: 180 } }),
+      fetch(`${DEXSCREENER_BASE}/tokens/${token.address}`, { next: { revalidate: 180 } }),
     ]);
     const jettonJson = jetton.ok ? await jetton.json() : null;
     const marketJson = market.ok ? await market.json() : null;
+    const dexJson = dex.ok ? await dex.json() : null;
     const resolved = marketJson?.asset || marketJson?.data || marketJson || {};
+    const pair = Array.isArray(dexJson?.pairs) && dexJson.pairs.length ? dexJson.pairs[0] : null;
 
     let uploadedLogo = token.logo_url;
-    if (uploadedLogo && !uploadedLogo.startsWith('http') && supabaseAdmin) {
+    if (uploadedLogo && !uploadedLogo.startsWith('http') && !uploadedLogo.startsWith('/') && supabaseAdmin) {
       const { data } = supabaseAdmin.storage.from(storageBucket).getPublicUrl(uploadedLogo);
       uploadedLogo = data.publicUrl;
     }
+
+    const priceUsd = pair?.priceUsd ?? resolved?.dex_usd_price ?? resolved?.priceUsd ?? token.price_usd;
+    const marketCapUsd = pair?.fdv ?? resolved?.dex_market_cap_usd ?? resolved?.marketCapUsd ?? token.market_cap_usd;
+    const liquidityUsd = pair?.liquidity?.usd ?? resolved?.dex_liquidity_usd ?? resolved?.liquidityUsd ?? token.liquidity_usd;
+    const volume24hUsd = pair?.volume?.h24 ?? resolved?.volume_24h_usd ?? resolved?.volume24hUsd ?? token.volume_24h_usd;
+    const change24hPercent = pair?.priceChange?.h24 ?? resolved?.price_change_24h ?? resolved?.change24h ?? token.change_24h_percent;
+    const chartUrl = pair?.url ?? token.chart_url;
 
     return {
       ...token,
@@ -75,11 +89,12 @@ async function enrichToken(token: ListedToken): Promise<ListedToken> {
       logo_url: uploadedLogo || jettonJson?.metadata?.image || token.logo_url,
       description: token.description || jettonJson?.metadata?.description || token.description,
       holders: Number(jettonJson?.holders_count || token.holders),
-      price_usd: Number(resolved?.dex_usd_price || resolved?.priceUsd || token.price_usd),
-      market_cap_usd: Number(resolved?.dex_market_cap_usd || resolved?.marketCapUsd || token.market_cap_usd),
-      liquidity_usd: Number(resolved?.dex_liquidity_usd || resolved?.liquidityUsd || token.liquidity_usd),
-      volume_24h_usd: Number(resolved?.volume_24h_usd || resolved?.volume24hUsd || token.volume_24h_usd),
-      change_24h_percent: Number(resolved?.price_change_24h || resolved?.change24h || token.change_24h_percent),
+      price_usd: priceUsd != null ? Number(priceUsd) : token.price_usd,
+      market_cap_usd: marketCapUsd != null ? Number(marketCapUsd) : token.market_cap_usd,
+      liquidity_usd: liquidityUsd != null ? Number(liquidityUsd) : token.liquidity_usd,
+      volume_24h_usd: volume24hUsd != null ? Number(volume24hUsd) : token.volume_24h_usd,
+      change_24h_percent: change24hPercent != null ? Number(change24hPercent) : token.change_24h_percent,
+      chart_url: chartUrl || token.chart_url,
     };
   } catch {
     return token;
@@ -101,19 +116,11 @@ export async function getHomepageData() {
   const now = Date.now();
   const promoted = tokens
     .filter((token) => token.promoted && (!token.promotion_expires_at || new Date(token.promotion_expires_at).getTime() > now))
-    .slice(0, 3);
-  const topVoted = [...tokens].sort((a, b) => b.votes_all_time - a.votes_all_time).slice(0, 6);
-  const top24h = [...tokens].sort((a, b) => b.votes_24h - a.votes_24h).slice(0, 6);
-  const topGainers = [...tokens]
-    .filter((token) => typeof token.change_24h_percent === 'number')
-    .sort((a, b) => (b.change_24h_percent || 0) - (a.change_24h_percent || 0))
     .slice(0, 6);
-  const latest = [...tokens].sort((a, b) => new Date(b.listed_at).getTime() - new Date(a.listed_at).getTime()).slice(0, 6);
-  const stats = {
-    totalTokens: tokens.length,
-    totalVotes24h: tokens.reduce((sum, token) => sum + (token.votes_24h || 0), 0),
-    promotedCount: promoted.length,
-    totalMarketCap: tokens.reduce((sum, token) => sum + (token.market_cap_usd || 0), 0),
-  };
-  return { tokens, promoted, topVoted, top24h, topGainers, latest, stats };
+  const trending = [...tokens].sort((a, b) => b.votes_24h - a.votes_24h).slice(0, 10);
+  const topVoted = [...tokens].sort((a, b) => b.votes_all_time - a.votes_all_time).slice(0, 6);
+  const topGainers = [...tokens].sort((a, b) => (b.change_24h_percent || 0) - (a.change_24h_percent || 0)).slice(0, 6);
+  const latest = [...tokens].sort((a, b) => new Date(b.listed_at).getTime() - new Date(a.listed_at).getTime()).slice(0, 8);
+
+  return { promoted, trending, topVoted, topGainers, latest };
 }
