@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Menu, Search, Shield, Megaphone } from 'lucide-react';
+import { Search, Shield } from 'lucide-react';
 import { getPrimaryBannerAd } from '@/lib/banner-ads';
+import { MobileMenu } from '@/components/mobile-menu';
 
 const links = [
   { href: '/', label: 'Home' },
@@ -38,37 +39,9 @@ export async function Header() {
       </div>
 
       <div className="container-main py-1.5">
-        <div className="mx-auto flex min-h-[54px] max-w-5xl items-center justify-between gap-2">
+        <div className="mx-auto flex min-h-[54px] max-w-4xl items-center justify-between gap-2 overflow-hidden">
           <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-            <details className="relative md:hidden">
-              <summary className="flex h-8 w-8 cursor-pointer list-none items-center justify-center rounded-xl border border-stroke/80 bg-card/70 text-slate-100 marker:content-none">
-                <Menu className="h-4.5 w-4.5" />
-              </summary>
-              <div className="absolute left-0 top-12 w-72 rounded-[24px] border border-stroke bg-[#071325]/95 p-4 shadow-soft backdrop-blur-xl">
-                <form action="/explore" method="get" className="mb-4">
-                  <div className="flex items-center gap-2 rounded-2xl border border-stroke/80 bg-black/25 px-3 py-2">
-                    <Search className="h-4 w-4 text-slate-400" />
-                    <input
-                      type="text"
-                      name="q"
-                      placeholder="Search tokens"
-                      className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
-                    />
-                  </div>
-                </form>
-                <div className="space-y-2">
-                  {links.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="block rounded-2xl border border-stroke/70 px-4 py-3 text-sm text-slate-200 transition hover:border-cyan-400/35 hover:text-white"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </details>
+            <div className="md:hidden"><MobileMenu /></div>
 
             <Link href="/" className="flex min-w-0 items-center gap-2 justify-center">
               <div className="overflow-hidden rounded-2xl border border-cyan-300/25 shadow-[0_0_32px_rgba(34,211,238,0.18)]">
