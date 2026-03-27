@@ -5,3 +5,5 @@
 img,svg,video,canvas,iframe{max-width:100%;height:auto}input,textarea,select,button{max-width:100%}input,textarea,select{font-size:16px}
 
 main,section,div{max-width:100%;}
+
+.safe-wrap{overflow-wrap:anywhere;word-break:break-word}
