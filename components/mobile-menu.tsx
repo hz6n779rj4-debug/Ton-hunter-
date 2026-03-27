@@ -27,58 +27,63 @@ export function MobileMenu() {
         aria-label="Open menu"
         aria-expanded={open}
         onClick={() => setOpen(true)}
-        className="flex h-8 w-8 items-center justify-center rounded-xl border border-stroke/80 bg-card/80 text-slate-100 shadow-[0_0_20px_rgba(34,211,238,0.12)]"
+        className="flex h-10 w-10 items-center justify-center rounded-2xl border border-stroke/80 bg-slate-950/90 text-slate-100 shadow-[0_0_22px_rgba(34,211,238,0.12)]"
       >
-        <Menu className="h-4.5 w-4.5" />
+        <Menu className="h-5 w-5" />
       </button>
 
       {open ? (
-        <div className="fixed inset-0 z-[200] md:hidden">
-          <div className="absolute inset-0 bg-[#020814]/96 backdrop-blur-xl" onClick={() => setOpen(false)} />
+        <div className="fixed inset-0 z-[300] md:hidden">
+          <button type="button" aria-label="Close menu overlay" onClick={() => setOpen(false)} className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
-          <div className="absolute inset-0 flex flex-col bg-[linear-gradient(180deg,rgba(2,8,20,0.99),rgba(4,12,30,0.99))] text-white">
-            <div className="flex items-start justify-between border-b border-stroke/70 px-5 py-5">
-              <div>
-                <div className="text-xs uppercase tracking-[0.34em] text-cyan-200">Menu</div>
-                <div className="mt-2 text-lg font-semibold text-white">Ton Gemz</div>
-              </div>
-              <button
-                type="button"
-                aria-label="Close menu"
-                onClick={() => setOpen(false)}
-                className="flex h-12 w-12 items-center justify-center rounded-full border border-stroke/80 bg-slate-900/90 text-slate-200"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto px-5 py-5">
-              <form action="/explore" method="get" className="mb-6">
-                <div className="flex items-center gap-2 rounded-2xl border border-stroke/80 bg-slate-950/95 px-4 py-4 shadow-soft">
-                  <Search className="h-4 w-4 text-slate-400" />
-                  <input
-                    type="text"
-                    name="q"
-                    placeholder="Search tokens"
-                    className="w-full min-w-0 bg-transparent text-base text-white outline-none placeholder:text-slate-500"
-                  />
+          <aside className="absolute inset-y-0 left-0 w-[86vw] max-w-[340px] border-r border-stroke/70 bg-[linear-gradient(180deg,#020816_0%,#061227_100%)] text-white shadow-2xl">
+            <div className="flex h-full flex-col">
+              <div className="flex items-start justify-between border-b border-stroke/70 px-5 py-5">
+                <div>
+                  <div className="text-xs uppercase tracking-[0.34em] text-cyan-200">Menu</div>
+                  <div className="mt-2 text-2xl font-semibold text-white">Ton Gemz</div>
+                  <div className="mt-1 text-sm text-slate-400">Navigate Ton Gemz</div>
                 </div>
-              </form>
+                <button
+                  type="button"
+                  aria-label="Close menu"
+                  onClick={() => setOpen(false)}
+                  className="mt-1 flex h-12 w-12 items-center justify-center rounded-full border border-stroke/80 bg-slate-900/90 text-slate-200"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
 
-              <nav className="grid gap-3">
-                {links.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className="block rounded-2xl border border-stroke/70 bg-slate-950/95 px-5 py-4 text-lg font-medium text-slate-100 transition hover:border-cyan-400/35 hover:text-white"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+              <div className="px-5 py-5">
+                <form action="/explore" method="get">
+                  <div className="flex items-center gap-2 rounded-2xl border border-stroke/80 bg-slate-950/95 px-4 py-3 shadow-soft">
+                    <Search className="h-4 w-4 text-slate-400" />
+                    <input
+                      type="text"
+                      name="q"
+                      placeholder="Search tokens"
+                      className="w-full min-w-0 bg-transparent text-base text-white outline-none placeholder:text-slate-500"
+                    />
+                  </div>
+                </form>
+              </div>
+
+              <nav className="flex-1 overflow-y-auto px-5 pb-6">
+                <div className="space-y-3">
+                  {links.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setOpen(false)}
+                      className="block rounded-2xl border border-stroke/70 bg-slate-950/90 px-5 py-4 text-lg font-medium text-slate-100 transition hover:border-cyan-400/35 hover:text-white"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
               </nav>
             </div>
-          </div>
+          </aside>
         </div>
       ) : null}
     </>
