@@ -87,7 +87,7 @@ export default async function AdminPanelPage({
               filteredTokens.map((token) => {
                 const status = token.status || 'approved';
                 return (
-                  <div key={token.id} className="card p-5">
+                  <div key={token.id} className="card overflow-hidden p-5">
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-3">
@@ -97,8 +97,8 @@ export default async function AdminPanelPage({
                           <span className="rounded-full border border-stroke px-3 py-1 text-xs capitalize text-slate-300">{token.listing_tier || 'free'}</span>
                           {token.promoted ? <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-300">Promoted</span> : null}
                         </div>
-                        <p className="mt-2 break-all text-sm text-slate-400">{token.address}</p>
-                        {token.payment_reference ? <p className="mt-2 text-xs text-slate-500">Payment ref: {token.payment_reference}</p> : null}
+                        <p className="mt-2 break-all text-xs leading-6 text-slate-400 sm:text-sm">{token.address}</p>
+                        {token.payment_reference ? <p className="mt-2 break-all text-xs text-slate-500">Payment ref: {token.payment_reference}</p> : null}
                         {token.promotion_expires_at ? <p className="mt-1 text-xs text-slate-500">Promotion ends: {new Date(token.promotion_expires_at).toLocaleString()}</p> : null}
                       </div>
 
@@ -128,7 +128,7 @@ export default async function AdminPanelPage({
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-hidden">
           <div className="card p-6">
             <div className="mb-3 inline-flex rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-fuchsia-200">Banner ads manager</div>
             <h2 className="text-2xl font-semibold text-white">Publish header banners</h2>
@@ -179,7 +179,7 @@ export default async function AdminPanelPage({
                           <div className="font-semibold text-white">{ad.title}</div>
                           <span className={`rounded-full border px-2.5 py-0.5 text-[11px] ${ad.is_active ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300' : 'border-slate-500/30 bg-slate-500/10 text-slate-300'}`}>{ad.is_active ? 'On' : 'Off'}</span>
                         </div>
-                        <a href={ad.target_url} className="mt-1 block truncate text-xs text-cyan-300 hover:text-cyan-200">{ad.target_url}</a>
+                        <a href={ad.target_url} className="mt-1 block break-all text-xs text-cyan-300 hover:text-cyan-200">{ad.target_url}</a>
                         <div className="mt-2 text-xs text-slate-400">{ad.starts_at ? `Start: ${new Date(ad.starts_at).toLocaleString()}` : 'Start: now'} · {ad.ends_at ? `End: ${new Date(ad.ends_at).toLocaleString()}` : 'No end date'}</div>
                       </div>
                     </div>
