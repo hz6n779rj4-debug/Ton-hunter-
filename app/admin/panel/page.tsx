@@ -54,7 +54,8 @@ export default async function AdminPanelPage({ searchParams }: { searchParams?: 
       </div>
 
       {ownerMessage ? <div className="mx-auto mb-5 max-w-5xl card border border-cyan-500/30 p-4 text-sm text-cyan-200">{ownerMessage}</div> : null}
-      {actionError ? <div className="mx-auto mb-5 max-w-5xl rounded-[24px] border border-rose-500/30 bg-rose-500/8 p-4 text-sm text-rose-200"><div>{actionError}</div>{actionError.includes('admin_boost_votes') ? <div className="mt-2 text-xs text-rose-200/80">Run this once in Supabase SQL Editor: <code className="rounded bg-black/20 px-1.5 py-0.5 text-[11px]">alter table public.tokens add column if not exists admin_boost_votes integer not null default 0;</code></div> : null}</div> : null}
+      {actionError ? <div className="mx-auto mb-5 max-w-5xl card border border-rose-500/30 p-4 text-sm text-rose-300">{actionError}</div> : null}
+      {!tokens.length ? <div className="mx-auto mb-5 max-w-5xl card border border-cyan-500/20 p-4 text-sm text-slate-300">No live token rows found in Supabase yet.</div> : null}
 
       <div className="mx-auto grid max-w-5xl gap-6 xl:grid-cols-1">
         <div>
@@ -124,7 +125,7 @@ export default async function AdminPanelPage({ searchParams }: { searchParams?: 
         </div>
 
         <div className="space-y-6 overflow-hidden">
-          <div className="card mx-auto w-full max-w-3xl p-6">
+          <div className="card p-6">
             <div className="mb-3 inline-flex rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-fuchsia-200">Banner ads manager</div>
             <h2 className="text-2xl font-semibold text-white">Publish header banners</h2>
             <p className="mt-2 text-sm text-slate-400">Upload a banner image, add the project link, set start and end dates, then publish. No redeploy needed.</p>
@@ -141,7 +142,7 @@ export default async function AdminPanelPage({ searchParams }: { searchParams?: 
             </form>
           </div>
 
-          <div className="card mx-auto w-full max-w-3xl p-6">
+          <div className="card p-6">
             <div className="mb-4 flex items-center justify-between gap-3"><h2 className="text-2xl font-semibold text-white">Live banner queue</h2><span className="text-sm text-slate-400">{bannerAds.length} saved</span></div>
             <div className="space-y-4">
               {bannerAds.length === 0 ? <EmptyState text="No banner ads yet." /> : bannerAds.map((ad) => (
