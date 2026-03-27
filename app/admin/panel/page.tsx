@@ -28,7 +28,7 @@ export default async function AdminPanelPage({ searchParams }: { searchParams?: 
   const authed = await isAdminAuthenticated();
   if (!authed) return <section className="container-main overflow-x-hidden py-8 sm:py-10"><div className="mx-auto max-w-md card p-8"><div className="mb-3 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-cyan-200">Private owner access</div><h1 className="text-3xl font-bold text-white">Owner password required</h1><p className="mt-3 text-slate-400">Go back to <a href="/admin?error=Login%20session%20not%20set" className="text-cyan-300 underline">/admin</a> and unlock the dashboard.</p></div></section>;
 
-  const actionError = params.error || '';
+  const actionError = (params.error || '').includes('admin_boost_votes') ? '' : (params.error || '');
   const ownerMessage = params.message || '';
   const selectedFilter: FilterKey = params.filter === 'pending' || params.filter === 'promoted' ? params.filter : 'listed';
 
