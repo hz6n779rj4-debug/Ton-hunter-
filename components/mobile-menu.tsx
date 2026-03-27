@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Menu, Search, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const links = [
   { href: '/', label: 'Home' },
   { href: '/explore', label: 'Explore' },
   { href: '/submit', label: 'Submit' },
   { href: '/banner-ads', label: 'Banner Ads' },
-  { href: '/admin', label: 'Owner' },
+  { href: '/admin', label: 'Owner Dashboard' },
 ];
 
 export function MobileMenu() {
@@ -33,57 +33,57 @@ export function MobileMenu() {
       </button>
 
       {open ? (
-        <div className="fixed inset-0 z-[300] md:hidden">
-          <button type="button" aria-label="Close menu overlay" onClick={() => setOpen(false)} className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+        <div className="fixed inset-0 z-[500] md:hidden">
+          <button
+            type="button"
+            aria-label="Close menu overlay"
+            onClick={() => setOpen(false)}
+            className="absolute inset-0 bg-black/80"
+          />
 
-          <aside className="absolute inset-y-0 left-0 w-[86vw] max-w-[340px] border-r border-stroke/70 bg-[linear-gradient(180deg,#020816_0%,#061227_100%)] text-white shadow-2xl">
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,#020816_0%,#061227_48%,#07182f_100%)] text-white">
             <div className="flex h-full flex-col">
-              <div className="flex items-start justify-between border-b border-stroke/70 px-5 py-5">
-                <div>
-                  <div className="text-xs uppercase tracking-[0.34em] text-cyan-200">Menu</div>
-                  <div className="mt-2 text-2xl font-semibold text-white">Ton Gemz</div>
-                  <div className="mt-1 text-sm text-slate-400">Navigate Ton Gemz</div>
+              <div className="flex items-center justify-between border-b border-stroke/70 px-5 py-5">
+                <div className="min-w-0">
+                  <div className="text-[11px] uppercase tracking-[0.34em] text-cyan-200/90">Ton Gemz</div>
+                  <div className="mt-1 text-2xl font-semibold text-white">Menu</div>
                 </div>
                 <button
                   type="button"
                   aria-label="Close menu"
                   onClick={() => setOpen(false)}
-                  className="mt-1 flex h-12 w-12 items-center justify-center rounded-full border border-stroke/80 bg-slate-900/90 text-slate-200"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-stroke/80 bg-slate-900/90 text-slate-200"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
 
-              <div className="px-5 py-5">
-                <form action="/explore" method="get">
-                  <div className="flex items-center gap-2 rounded-2xl border border-stroke/80 bg-slate-950/95 px-4 py-3 shadow-soft">
-                    <Search className="h-4 w-4 text-slate-400" />
-                    <input
-                      type="text"
-                      name="q"
-                      placeholder="Search tokens"
-                      className="w-full min-w-0 bg-transparent text-base text-white outline-none placeholder:text-slate-500"
-                    />
-                  </div>
-                </form>
-              </div>
-
-              <nav className="flex-1 overflow-y-auto px-5 pb-6">
+              <nav className="flex-1 overflow-y-auto px-5 py-6">
                 <div className="space-y-3">
                   {links.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
                       onClick={() => setOpen(false)}
-                      className="block rounded-2xl border border-stroke/70 bg-slate-950/90 px-5 py-4 text-lg font-medium text-slate-100 transition hover:border-cyan-400/35 hover:text-white"
+                      className="block rounded-2xl border border-stroke/70 bg-slate-950/70 px-5 py-4 text-lg font-medium text-slate-100 transition hover:border-cyan-400/35 hover:bg-slate-900/90 hover:text-white"
                     >
                       {link.label}
                     </Link>
                   ))}
                 </div>
               </nav>
+
+              <div className="border-t border-stroke/70 px-5 py-5">
+                <Link
+                  href="/submit"
+                  onClick={() => setOpen(false)}
+                  className="block rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-slate-950"
+                >
+                  Submit Token
+                </Link>
+              </div>
             </div>
-          </aside>
+          </div>
         </div>
       ) : null}
     </>
