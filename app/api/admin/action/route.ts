@@ -60,12 +60,7 @@ export async function POST(request: Request) {
     const reason = String(form.get('reason') || '').trim();
     const { data, error } = await supabaseAdmin.from('tokens').select('admin_boost_votes,votes_24h').eq('address', address).single();
     if (error || !data) {
-      const message = error?.message || 'Unable to load token votes.';
-      if (message.includes('admin_boost_votes')) {
-        redirectUrl.searchParams.set('error', 'Missing column: tokens.admin_boost_votes. Add it in Supabase SQL Editor, then try again.');
-      } else {
-        redirectUrl.searchParams.set('error', message);
-      }
+      redirectUrl.searchParams.set('error', error?.message || 'Unable to load token votes.');
       return NextResponse.redirect(redirectUrl, 303);
     }
 
@@ -81,7 +76,7 @@ export async function POST(request: Request) {
     if (action === 'remove-votes') nextBoostVotes = Math.max(0, nextBoostVotes - Math.max(0, amount));
     if (action === 'set-votes') nextBoostVotes = Math.max(0, amount);
 
-    const { error: updateError } = await supabaseAdmin.from('tokens').update({ admin_boost_votes: nextBoostVotes }).eq('address', address);
+    const { error: updateError } = await supabaseAdmin.from('tokens').update({ admin_boost_votes: nextBoostVotes, votes_24h: Number(data.votes_24h || 0) + (action === 'boost-votes' ? Math.max(0, amount) : action === 'remove-votes' ? -Math.min(Number(data.votes_24h || 0), Math.max(0, amount)) : 0) }).eq('address', address);
     if (updateError) redirectUrl.searchParams.set('error', updateError.message);
     else redirectUrl.searchParams.set('message', `Boost votes updated to ${nextBoostVotes}.`);
     await logAction(address, action, amount, reason);
