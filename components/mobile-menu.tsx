@@ -1,4 +1,4 @@
-'use client';
+use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -16,11 +16,15 @@ export function MobileMenu() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!open) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    const previousOverflow = document.body.style.overflow;
+    const previousTouch = document.body.style.touchAction;
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    }
     return () => {
-      document.body.style.overflow = previous;
+      document.body.style.overflow = previousOverflow;
+      document.body.style.touchAction = previousTouch;
     };
   }, [open]);
 
@@ -37,29 +41,22 @@ export function MobileMenu() {
       </button>
 
       {open ? (
-        <div className="fixed inset-0 z-[80] md:hidden">
-          <button
-            type="button"
-            aria-label="Close menu overlay"
-            className="absolute inset-0 bg-slate-950/82"
-            onClick={() => setOpen(false)}
-          />
-
-          <aside className="absolute inset-y-0 left-0 w-[86vw] max-w-[320px] overflow-y-auto border-r border-stroke bg-[#071325] p-4 shadow-2xl">
+        <div className="fixed inset-0 z-[120] bg-[#030817] md:hidden">
+          <div className="mx-auto flex h-full w-full max-w-md flex-col px-4 pb-6 pt-5">
             <div className="mb-4 flex items-center justify-between">
-              <div className="text-xs uppercase tracking-[0.22em] text-cyan-200">Menu</div>
+              <div className="text-xs uppercase tracking-[0.28em] text-cyan-200">Menu</div>
               <button
                 type="button"
                 aria-label="Close menu"
                 onClick={() => setOpen(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-stroke/80 bg-slate-900 text-slate-200"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-stroke/80 bg-slate-900 text-slate-200"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
             <form action="/explore" method="get" className="mb-4">
-              <div className="flex items-center gap-2 rounded-2xl border border-stroke/80 bg-slate-950 px-3 py-3">
+              <div className="flex items-center gap-2 rounded-2xl border border-stroke/80 bg-slate-950 px-3 py-3 shadow-soft">
                 <Search className="h-4 w-4 text-slate-400" />
                 <input
                   type="text"
@@ -70,19 +67,19 @@ export function MobileMenu() {
               </div>
             </form>
 
-            <nav className="space-y-2">
+            <nav className="grid gap-3">
               {links.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-2xl border border-stroke/70 bg-slate-950/70 px-4 py-3.5 text-base text-slate-100 transition hover:border-cyan-400/35 hover:text-white"
+                  className="block rounded-2xl border border-stroke/70 bg-slate-950 px-4 py-4 text-base text-slate-100 transition hover:border-cyan-400/35 hover:text-white"
                 >
                   {link.label}
                 </Link>
               ))}
             </nav>
-          </aside>
+          </div>
         </div>
       ) : null}
     </>
