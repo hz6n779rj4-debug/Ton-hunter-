@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { isAdminAuthenticated } from '@/lib/auth';
 import { getTokens } from '@/lib/ton';
 import { getBannerAds } from '@/lib/banner-ads';
-import { formatCompact, shortAddress } from '@/lib/utils';
+import { formatCompact } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,7 +40,7 @@ export default async function AdminPanelPage({
 }) {
   const params = (await searchParams) || {};
   const authed = await isAdminAuthenticated();
-  if (!authed) return <section className="container-main py-14"><div className="mx-auto max-w-md card p-8"><div className="mb-3 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-cyan-200">Private owner access</div><h1 className="text-3xl font-bold text-white">Owner password required</h1><p className="mt-3 text-slate-400">Go back to <a href="/admin?error=Login%20session%20not%20set" className="text-cyan-300 underline">/admin</a> and unlock the dashboard.</p></div></section>;
+  if (!authed) return <section className="container-main overflow-x-hidden py-8 sm:py-10"><div className="mx-auto max-w-md card p-8"><div className="mb-3 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-cyan-200">Private owner access</div><h1 className="text-3xl font-bold text-white">Owner password required</h1><p className="mt-3 text-slate-400">Go back to <a href="/admin?error=Login%20session%20not%20set" className="text-cyan-300 underline">/admin</a> and unlock the dashboard.</p></div></section>;
 
   const actionError = params.error || '';
   const ownerMessage = params.message || '';
@@ -56,26 +56,24 @@ export default async function AdminPanelPage({
   const filteredTokens = selectedFilter === 'pending' ? pendingTokens : selectedFilter === 'promoted' ? promotedTokens : listedTokens;
 
   return (
-    <section className="container-main py-14">
-      <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Owner dashboard</h1>
-          <p className="mt-2 text-slate-400">Approve listings, control promoted slots, and manage header banner ads without editing files.</p>
-        </div>
+    <section className="container-main overflow-x-hidden py-8 sm:py-10">
+      <div className="mx-auto mb-6 max-w-4xl text-center">
+        <h1 className="text-3xl font-bold">Owner dashboard</h1>
+        <p className="mt-2 text-slate-400">Approve listings, control promoted slots, and manage header banner ads without editing files.</p>
       </div>
 
-      <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="mx-auto mb-4 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3">
         <FilterCard label="Listed" value={listedTokens.length} href="/admin/panel?filter=listed" active={selectedFilter === 'listed'} />
         <FilterCard label="Pending" value={pendingTokens.length} href="/admin/panel?filter=pending" active={selectedFilter === 'pending'} />
         <FilterCard label="Promoted" value={promotedTokens.length} href="/admin/panel?filter=promoted" active={selectedFilter === 'promoted'} />
       </div>
 
-      {ownerMessage ? <div className="mb-5 card border border-cyan-500/30 p-4 text-sm text-cyan-200">{ownerMessage}</div> : null}
-      {actionError ? <div className="mb-5 card border border-rose-500/30 p-4 text-sm text-rose-300">{actionError}</div> : null}
+      {ownerMessage ? <div className="mx-auto mb-5 max-w-4xl card border border-cyan-500/30 p-4 text-sm text-cyan-200">{ownerMessage}</div> : null}
+      {actionError ? <div className="mx-auto mb-5 max-w-4xl card border border-rose-500/30 p-4 text-sm text-rose-300">{actionError}</div> : null}
 
-      <div className="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
+      <div className="mx-auto grid max-w-4xl gap-6 xl:grid-cols-1">
         <div>
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-4 flex flex-col gap-2 text-center sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-2xl font-semibold text-white">
               {selectedFilter === 'pending' ? 'Pending tokens' : selectedFilter === 'promoted' ? 'Promoted tokens' : 'Listed tokens'}
             </h2>
@@ -123,11 +121,6 @@ export default async function AdminPanelPage({
                       </div>
                     </div>
 
-                    <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-400">
-                      <span>24h votes: <span className="text-white">{formatCompact(token.votes_24h)}</span></span>
-                      <span>All-time votes: <span className="text-white">{formatCompact(token.votes_all_time)}</span></span>
-                      <span>Shown as: <span className="text-white">{shortAddress(token.address)}</span></span>
-                    </div>
                   </div>
                 );
               })
