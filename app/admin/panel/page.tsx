@@ -157,7 +157,7 @@ export default async function AdminPanelPage({
                   <input name="ends_at" type="datetime-local" required className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 outline-none focus:border-cyan-400/50" />
                 </label>
               </div>
-              <button className="rounded-full bg-white px-5 py-3 font-medium text-slate-950">Publish banner</button>
+              <button className="mx-auto block w-full max-w-md rounded-full bg-white px-5 py-3 font-medium text-center text-slate-950">Publish banner</button>
             </form>
           </div>
 
