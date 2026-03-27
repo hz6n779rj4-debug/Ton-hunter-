@@ -1,6 +1,6 @@
+import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { revalidatePath } from 'next/cache';
 import { adminCookieName, getAdminSecret } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 
@@ -11,10 +11,17 @@ async function logAction(token_address: string, action: string, value?: number, 
   await supabaseAdmin.from('admin_actions').insert({ token_address, action, value: value ?? null, reason: reason || null });
 }
 
+function revalidateTokenPaths(address: string) {
+  revalidatePath('/');
+  revalidatePath('/explore');
+  revalidatePath('/admin/panel');
+  if (address) revalidatePath(`/token/${address}`);
+}
+
 export async function POST(request: Request) {
   const form = await request.formData();
   const action = String(form.get('action') || '');
-  const address = String(form.get('address') || '');
+  const address = String(form.get('address') || '').trim();
   const redirectUrl = new URL('/admin/panel', request.url);
 
   const secret = getAdminSecret();
@@ -32,14 +39,20 @@ export async function POST(request: Request) {
 
   if (action === 'approve') {
     const { error } = await supabaseAdmin.from('tokens').update({ status: 'approved' }).eq('address', address);
-    if (error) redirectUrl.searchParams.set('error', error.message); else redirectUrl.searchParams.set('message', 'Token approved.');
+    if (error) redirectUrl.searchParams.set('error', error.message); else {
+      redirectUrl.searchParams.set('message', 'Token approved.');
+      revalidateTokenPaths(address);
+    }
     await logAction(address, action);
     return NextResponse.redirect(redirectUrl, 303);
   }
 
   if (action === 'reject') {
     const { error } = await supabaseAdmin.from('tokens').update({ status: 'rejected' }).eq('address', address);
-    if (error) redirectUrl.searchParams.set('error', error.message); else redirectUrl.searchParams.set('message', 'Token rejected.');
+    if (error) redirectUrl.searchParams.set('error', error.message); else {
+      redirectUrl.searchParams.set('message', 'Token rejected.');
+      revalidateTokenPaths(address);
+    }
     await logAction(address, action);
     return NextResponse.redirect(redirectUrl, 303);
   }
@@ -51,7 +64,10 @@ export async function POST(request: Request) {
       return NextResponse.redirect(redirectUrl, 303);
     }
     const { error: updateError } = await supabaseAdmin.from('tokens').update({ promoted: !data?.promoted }).eq('address', address);
-    if (updateError) redirectUrl.searchParams.set('error', updateError.message); else redirectUrl.searchParams.set('message', `Promotion ${data?.promoted ? 'disabled' : 'enabled'}.`);
+    if (updateError) redirectUrl.searchParams.set('error', updateError.message); else {
+      redirectUrl.searchParams.set('message', `Promotion ${data?.promoted ? 'disabled' : 'enabled'}.`);
+      revalidateTokenPaths(address);
+    }
     await logAction(address, action, data?.promoted ? 0 : 1);
     return NextResponse.redirect(redirectUrl, 303);
   }
@@ -70,67 +86,52 @@ export async function POST(request: Request) {
       return NextResponse.redirect(redirectUrl, 303);
     }
 
-    if (action === 'reset-24h') {
-      const { error: updateError } = await supabaseAdmin
-        .from('tokens')
-        .update({ votes_24h: 0 })
-        .eq('address', address);
-
-      if (updateError) redirectUrl.searchParams.set('error', updateError.message);
-      else redirectUrl.searchParams.set('message', '24h votes reset.');
-
-      revalidatePath('/');
-      revalidatePath('/explore');
-      revalidatePath('/admin/panel');
-      revalidatePath(`/token/${address}`);
-      await logAction(address, action, 0, reason);
-      return NextResponse.redirect(redirectUrl, 303);
-    }
-
     const currentBoost = Number(data.admin_boost_votes || 0);
     const current24h = Number(data.votes_24h || 0);
-    const currentAllTime = Number(data.votes_all_time || 0);
+    const currentAll = Number(data.votes_all_time || 0);
 
-    let nextBoostVotes = currentBoost;
-    let delta = 0;
+    let nextBoost = currentBoost;
+    let next24h = current24h;
+    let nextAll = currentAll;
 
-    if (action === 'boost-votes') {
-      delta = amount;
-      nextBoostVotes = currentBoost + amount;
+    if (action === 'reset-24h') {
+      next24h = 0;
+    } else if (action === 'boost-votes') {
+      nextBoost = currentBoost + amount;
+      next24h = current24h + amount;
+      nextAll = currentAll + amount;
+    } else if (action === 'remove-votes') {
+      const removable = Math.min(currentBoost, amount);
+      nextBoost = currentBoost - removable;
+      next24h = Math.max(0, current24h - removable);
+      nextAll = Math.max(0, currentAll - removable);
+    } else if (action === 'set-votes') {
+      const targetBoost = amount;
+      const delta = targetBoost - currentBoost;
+      nextBoost = targetBoost;
+      next24h = Math.max(0, current24h + delta);
+      nextAll = Math.max(0, currentAll + delta);
     }
-
-    if (action === 'remove-votes') {
-      delta = -Math.min(currentBoost, amount);
-      nextBoostVotes = Math.max(0, currentBoost - amount);
-    }
-
-    if (action === 'set-votes') {
-      delta = Math.max(0, amount) - currentBoost;
-      nextBoostVotes = Math.max(0, amount);
-    }
-
-    const next24hVotes = Math.max(0, current24h + delta);
-    const nextAllTimeVotes = Math.max(0, currentAllTime + delta);
 
     const { error: updateError } = await supabaseAdmin
       .from('tokens')
       .update({
-        admin_boost_votes: nextBoostVotes,
-        votes_24h: next24hVotes,
-        votes_all_time: nextAllTimeVotes,
+        admin_boost_votes: nextBoost,
+        votes_24h: next24h,
+        votes_all_time: nextAll,
       })
       .eq('address', address);
 
     if (updateError) {
       redirectUrl.searchParams.set('error', updateError.message);
     } else {
-      redirectUrl.searchParams.set('message', `Boost votes updated to ${nextBoostVotes}.`);
-      revalidatePath('/');
-      revalidatePath('/explore');
-      revalidatePath('/admin/panel');
-      revalidatePath(`/token/${address}`);
+      redirectUrl.searchParams.set('message',
+        action === 'reset-24h'
+          ? '24h votes reset.'
+          : `Votes updated. Boost ${nextBoost} · 24h ${next24h} · All-time ${nextAll}.`
+      );
+      revalidateTokenPaths(address);
     }
-
     await logAction(address, action, amount, reason);
     return NextResponse.redirect(redirectUrl, 303);
   }
