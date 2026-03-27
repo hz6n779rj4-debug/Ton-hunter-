@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { adminCookieName, getAdminSecret } from '@/lib/auth';
@@ -56,29 +57,83 @@ export async function POST(request: Request) {
   }
 
   if (action === 'boost-votes' || action === 'remove-votes' || action === 'set-votes' || action === 'reset-24h') {
-    const amount = Number(form.get('amount') || 0);
+    const amount = Math.max(0, Number(form.get('amount') || 0));
     const reason = String(form.get('reason') || '').trim();
-    const { data, error } = await supabaseAdmin.from('tokens').select('admin_boost_votes,votes_24h').eq('address', address).single();
+    const { data, error } = await supabaseAdmin
+      .from('tokens')
+      .select('admin_boost_votes,votes_24h,votes_all_time')
+      .eq('address', address)
+      .single();
+
     if (error || !data) {
       redirectUrl.searchParams.set('error', error?.message || 'Unable to load token votes.');
       return NextResponse.redirect(redirectUrl, 303);
     }
 
+    const currentBoostVotes = Number(data.admin_boost_votes || 0);
+    const current24hVotes = Number(data.votes_24h || 0);
+    const currentAllTimeVotes = Number(data.votes_all_time || 0);
+
     if (action === 'reset-24h') {
-      const { error: updateError } = await supabaseAdmin.from('tokens').update({ votes_24h: 0 }).eq('address', address);
-      if (updateError) redirectUrl.searchParams.set('error', updateError.message); else redirectUrl.searchParams.set('message', '24h votes reset.');
+      const { error: updateError } = await supabaseAdmin
+        .from('tokens')
+        .update({ votes_24h: 0 })
+        .eq('address', address);
+      if (updateError) {
+        redirectUrl.searchParams.set('error', updateError.message);
+      } else {
+        revalidatePath('/');
+        revalidatePath('/explore');
+        revalidatePath('/admin/panel');
+        revalidatePath(`/token/${address}`);
+        redirectUrl.searchParams.set('message', '24h votes reset.');
+      }
       await logAction(address, action, 0, reason);
       return NextResponse.redirect(redirectUrl, 303);
     }
 
-    let nextBoostVotes = Number(data.admin_boost_votes || 0);
-    if (action === 'boost-votes') nextBoostVotes += Math.max(0, amount);
-    if (action === 'remove-votes') nextBoostVotes = Math.max(0, nextBoostVotes - Math.max(0, amount));
-    if (action === 'set-votes') nextBoostVotes = Math.max(0, amount);
+    let nextBoostVotes = currentBoostVotes;
+    let next24hVotes = current24hVotes;
+    let nextAllTimeVotes = currentAllTimeVotes;
 
-    const { error: updateError } = await supabaseAdmin.from('tokens').update({ admin_boost_votes: nextBoostVotes, votes_24h: Number(data.votes_24h || 0) + (action === 'boost-votes' ? Math.max(0, amount) : action === 'remove-votes' ? -Math.min(Number(data.votes_24h || 0), Math.max(0, amount)) : 0) }).eq('address', address);
-    if (updateError) redirectUrl.searchParams.set('error', updateError.message);
-    else redirectUrl.searchParams.set('message', `Boost votes updated to ${nextBoostVotes}.`);
+    if (action === 'boost-votes') {
+      nextBoostVotes = currentBoostVotes + amount;
+      next24hVotes = current24hVotes + amount;
+      nextAllTimeVotes = currentAllTimeVotes + amount;
+    }
+
+    if (action === 'remove-votes') {
+      const removable = Math.min(currentBoostVotes, amount);
+      nextBoostVotes = currentBoostVotes - removable;
+      next24hVotes = Math.max(0, current24hVotes - removable);
+      nextAllTimeVotes = Math.max(0, currentAllTimeVotes - removable);
+    }
+
+    if (action === 'set-votes') {
+      const diff = Math.max(0, amount) - currentBoostVotes;
+      nextBoostVotes = Math.max(0, amount);
+      next24hVotes = Math.max(0, current24hVotes + diff);
+      nextAllTimeVotes = Math.max(0, currentAllTimeVotes + diff);
+    }
+
+    const { error: updateError } = await supabaseAdmin
+      .from('tokens')
+      .update({
+        admin_boost_votes: nextBoostVotes,
+        votes_24h: next24hVotes,
+        votes_all_time: nextAllTimeVotes,
+      })
+      .eq('address', address);
+
+    if (updateError) {
+      redirectUrl.searchParams.set('error', updateError.message);
+    } else {
+      revalidatePath('/');
+      revalidatePath('/explore');
+      revalidatePath('/admin/panel');
+      revalidatePath(`/token/${address}`);
+      redirectUrl.searchParams.set('message', `Boost votes updated to ${nextBoostVotes}.`);
+    }
     await logAction(address, action, amount, reason);
     return NextResponse.redirect(redirectUrl, 303);
   }
