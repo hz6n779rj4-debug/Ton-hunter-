@@ -37,8 +37,8 @@ export async function Header() {
         </div>
       </div>
 
-      <div className="container-main py-2">
-        <div className="flex min-h-[58px] items-center justify-between gap-2">
+      <div className="container-main py-1.5">
+        <div className="mx-auto flex min-h-[54px] max-w-5xl items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
             <details className="relative md:hidden">
               <summary className="flex h-8 w-8 cursor-pointer list-none items-center justify-center rounded-xl border border-stroke/80 bg-card/70 text-slate-100 marker:content-none">
@@ -70,7 +70,7 @@ export async function Header() {
               </div>
             </details>
 
-            <Link href="/" className="flex min-w-0 items-center gap-2">
+            <Link href="/" className="flex min-w-0 items-center gap-2 justify-center">
               <div className="overflow-hidden rounded-2xl border border-cyan-300/25 shadow-[0_0_32px_rgba(34,211,238,0.18)]">
                 <Image src="/tongemz-logo.png" alt="Ton Gemz" width={40} height={40} className="h-9 w-9 object-cover sm:h-10 sm:w-10" />
               </div>
