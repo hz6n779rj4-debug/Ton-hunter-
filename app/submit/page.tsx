@@ -1,8 +1,8 @@
 export default function SubmitPage() {
   return (
-    <section className="container-main overflow-x-hidden py-10 sm:py-12">
-      <div className="mx-auto grid max-w-5xl gap-5 lg:grid-cols-[0.72fr_1.28fr]">
-        <div className="card min-w-0 p-5 sm:p-7">
+    <section className="container-main overflow-x-hidden py-8 sm:py-10">
+      <div className="mx-auto grid max-w-4xl gap-4 lg:grid-cols-[0.78fr_1.22fr]">
+        <div className="card min-w-0 p-5 text-left sm:p-6">
           <div className="mb-3 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-cyan-200">Submit Coin</div>
           <h1 className="text-3xl font-bold leading-tight">List your TON project</h1>
           <p className="mt-3 text-slate-400">Add your project to Ton Gemz for visibility, community voting, and promoted placement.</p>
@@ -13,7 +13,7 @@ export default function SubmitPage() {
           </div>
         </div>
 
-        <div className="card min-w-0 p-5 sm:p-7">
+        <div className="card min-w-0 p-5 text-left sm:p-6">
           <form action="/api/submit" method="post" encType="multipart/form-data" className="grid min-w-0 gap-4">
             <div className="grid gap-4 md:grid-cols-2">
               <Field label="Project name" name="name" placeholder="Ton Gemz" required />
