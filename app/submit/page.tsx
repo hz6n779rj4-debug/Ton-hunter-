@@ -1,4 +1,13 @@
+'use client';
+
+import { useMemo, useState } from 'react';
+
+const PAYMENT_WALLET = process.env.NEXT_PUBLIC_PAYMENT_WALLET || 'Set NEXT_PUBLIC_PAYMENT_WALLET in Vercel';
+
 export default function SubmitPage() {
+  const [tier, setTier] = useState<'free' | 'fast'>('free');
+  const memoPreview = useMemo(() => `TG-${Math.random().toString(36).slice(2, 8).toUpperCase()}`, []);
+
   return (
     <section className="container-main overflow-x-hidden py-8 sm:py-10">
       <div className="mx-auto grid max-w-4xl gap-4 lg:grid-cols-[0.78fr_1.22fr]">
@@ -8,7 +17,7 @@ export default function SubmitPage() {
           <p className="mt-3 text-slate-400">Add your project to Ton Gemz for visibility, community voting, and promoted placement.</p>
           <div className="mt-8 space-y-4 text-sm text-slate-300">
             <div className="panel p-4"><div className="font-medium text-white">Free listing</div><p className="mt-1 text-slate-400">Sent for review and approved manually before going live.</p></div>
-            <div className="panel p-4"><div className="font-medium text-white">Fast listing</div><p className="mt-1 text-slate-400">10 TON. Submit details, then pay using the reference shown on the next screen.</p></div>
+            <div className="panel p-4"><div className="font-medium text-white">Fast listing</div><p className="mt-1 text-slate-400">10 TON. Submit details, then pay using the wallet and memo shown below.</p></div>
             <div className="panel p-4"><div className="font-medium text-white">Promoted slots</div><p className="mt-1 text-slate-400">1 day = 5 TON, 3 days = 12 TON, 7 days = 25 TON.</p></div>
           </div>
         </div>
@@ -28,11 +37,38 @@ export default function SubmitPage() {
             </div>
             <label className="grid min-w-0 gap-2 text-sm">
               <span className="text-slate-300">Listing tier</span>
-              <select name="listing_tier" className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 text-base outline-none focus:border-cyan-400/50">
+              <select
+                name="listing_tier"
+                value={tier}
+                onChange={(e) => setTier(e.target.value as 'free' | 'fast')}
+                className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 text-base outline-none focus:border-cyan-400/50"
+              >
                 <option value="free">Free listing — under review</option>
                 <option value="fast">Fast listing — 10 TON</option>
               </select>
             </label>
+
+            {tier === 'fast' && (
+              <div className="panel rounded-3xl border border-cyan-400/20 bg-cyan-400/5 p-4 sm:p-5">
+                <div className="text-xs uppercase tracking-[0.22em] text-cyan-200">Fast listing payment</div>
+                <div className="mt-4 grid gap-4">
+                  <div>
+                    <div className="text-xs uppercase tracking-[0.18em] text-white/40">Amount</div>
+                    <div className="mt-2 text-lg font-semibold text-white">10 TON</div>
+                  </div>
+                  <div>
+                    <div className="text-xs uppercase tracking-[0.18em] text-white/40">Wallet</div>
+                    <div className="mt-2 break-all rounded-2xl border border-stroke bg-slate-950/40 px-4 py-3 text-sm text-white">{PAYMENT_WALLET}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs uppercase tracking-[0.18em] text-white/40">Memo / reference</div>
+                    <div className="mt-2 rounded-2xl border border-stroke bg-slate-950/40 px-4 py-3 text-sm text-white">Generated after submit. Example: {memoPreview}</div>
+                  </div>
+                  <p className="text-sm text-slate-300">After you submit, Ton Gemz will show your exact payment reference. Send exactly 10 TON to the wallet above and use the memo shown after submission.</p>
+                </div>
+              </div>
+            )}
+
             <label className="grid min-w-0 gap-2 text-sm">
               <span className="text-slate-300">Description</span>
               <textarea name="description" rows={6} required className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 text-base outline-none focus:border-cyan-400/50" placeholder="Tell people why your TON project matters." />
