@@ -11,6 +11,10 @@ const headers = (): HeadersInit => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
+export function getTokenScore(token: ListedToken) {
+  return Number(token.votes_all_time || 0) + Number(token.admin_boost_votes || 0);
+}
+
 function normalizeToken(token: Partial<ListedToken>): ListedToken {
   return {
     id: String(token.id || crypto.randomUUID()),
@@ -27,6 +31,7 @@ function normalizeToken(token: Partial<ListedToken>): ListedToken {
     promoted: Boolean(token.promoted),
     votes_24h: Number(token.votes_24h || 0),
     votes_all_time: Number(token.votes_all_time || 0),
+    admin_boost_votes: Number(token.admin_boost_votes || 0),
     holders: token.holders != null ? Number(token.holders) : undefined,
     price_usd: token.price_usd != null ? Number(token.price_usd) : undefined,
     market_cap_usd: token.market_cap_usd != null ? Number(token.market_cap_usd) : undefined,
@@ -107,7 +112,7 @@ export async function getTokens(includePending = false): Promise<ListedToken[]> 
 }
 
 export async function getTokenByAddress(address: string): Promise<ListedToken | null> {
-  const tokens = await getTokens();
+  const tokens = await getTokens(true);
   return tokens.find((token) => token.address === address) || null;
 }
 
@@ -117,8 +122,8 @@ export async function getHomepageData() {
   const promoted = tokens
     .filter((token) => token.promoted && (!token.promotion_expires_at || new Date(token.promotion_expires_at).getTime() > now))
     .slice(0, 6);
-  const trending = [...tokens].sort((a, b) => b.votes_24h - a.votes_24h).slice(0, 10);
-  const topVoted = [...tokens].sort((a, b) => b.votes_all_time - a.votes_all_time).slice(0, 6);
+  const trending = [...tokens].sort((a, b) => (b.votes_24h || 0) - (a.votes_24h || 0)).slice(0, 10);
+  const topVoted = [...tokens].sort((a, b) => getTokenScore(b) - getTokenScore(a)).slice(0, 6);
   const topGainers = [...tokens].sort((a, b) => (b.change_24h_percent || 0) - (a.change_24h_percent || 0)).slice(0, 6);
   const latest = [...tokens].sort((a, b) => new Date(b.listed_at).getTime() - new Date(a.listed_at).getTime()).slice(0, 8);
 

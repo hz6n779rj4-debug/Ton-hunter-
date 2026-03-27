@@ -13,6 +13,7 @@ export type ListedToken = {
   promoted: boolean;
   votes_24h: number;
   votes_all_time: number;
+  admin_boost_votes: number;
   holders?: number;
   price_usd?: number;
   market_cap_usd?: number;
@@ -37,4 +38,11 @@ export type BannerAd = {
   ends_at: string | null;
   display_order: number;
   created_at: string;
+};
+
+export type VoteState = {
+  status: 'success' | 'cooldown' | 'error' | null;
+  cooldownHours?: number;
+  nextVoteAt?: string | null;
+  message?: string;
 };
