@@ -28,14 +28,14 @@ export default function SubmitPage() {
             </div>
             <label className="grid min-w-0 gap-2 text-sm">
               <span className="text-slate-300">Listing tier</span>
-              <select name="listing_tier" className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 outline-none focus:border-cyan-400/50">
+              <select name="listing_tier" className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 text-base outline-none focus:border-cyan-400/50">
                 <option value="free">Free listing — under review</option>
                 <option value="fast">Fast listing — 10 TON</option>
               </select>
             </label>
             <label className="grid min-w-0 gap-2 text-sm">
               <span className="text-slate-300">Description</span>
-              <textarea name="description" rows={6} required className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 outline-none focus:border-cyan-400/50" placeholder="Tell people why your TON project matters." />
+              <textarea name="description" rows={6} required className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 text-base outline-none focus:border-cyan-400/50" placeholder="Tell people why your TON project matters." />
             </label>
             <button className="mt-2 rounded-full bg-white px-5 py-3 font-medium text-slate-950">Submit listing</button>
           </form>
@@ -46,14 +46,14 @@ export default function SubmitPage() {
 }
 
 function Field({ label, name, placeholder, required = false }: { label: string; name: string; placeholder: string; required?: boolean }) {
-  return <label className="grid min-w-0 gap-2 text-sm"><span className="text-slate-300">{label}</span><input name={name} required={required} placeholder={placeholder} className="w-full min-w-0 rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 outline-none focus:border-cyan-400/50" /></label>;
+  return <label className="grid min-w-0 gap-2 text-sm"><span className="text-slate-300">{label}</span><input name={name} required={required} placeholder={placeholder} className="w-full min-w-0 rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 text-base outline-none focus:border-cyan-400/50" /></label>;
 }
 
 function UploadField() {
   return (
     <label className="grid min-w-0 gap-2 text-sm">
       <span className="text-slate-300">Project logo upload</span>
-      <input name="logo" type="file" accept="image/*" required className="w-full min-w-0 rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 text-sm outline-none file:mr-3 file:rounded-full file:border-0 file:bg-cyan-400/10 file:px-3 file:py-2 file:text-cyan-200" />
+      <input name="logo" type="file" accept="image/*" required className="w-full min-w-0 rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 text-base outline-none file:mr-3 file:rounded-full file:border-0 file:bg-cyan-400/10 file:px-3 file:py-2 file:text-cyan-200" />
     </label>
   );
 }
