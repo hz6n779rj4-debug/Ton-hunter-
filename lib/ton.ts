@@ -1,4 +1,3 @@
-import { sampleTokens } from './sample-data';
 import { storageBucket, supabaseAdmin } from './supabase';
 import { ListedToken } from './types';
 
@@ -47,16 +46,26 @@ function normalizeToken(token: Partial<ListedToken>): ListedToken {
   };
 }
 
+const allowSampleData = process.env.ALLOW_SAMPLE_DATA === 'true' && process.env.NODE_ENV !== 'production';
+
 async function getDbTokens(includePending = false): Promise<ListedToken[]> {
   if (!supabaseAdmin) {
-    return includePending ? [] : sampleTokens.map(normalizeToken);
+    if (allowSampleData && !includePending) {
+      return (await import('./sample-data')).sampleTokens.map(normalizeToken);
+    }
+    return [];
   }
 
   let query = supabaseAdmin.from('tokens').select('*').order('promoted', { ascending: false }).order('votes_24h', { ascending: false });
   if (!includePending) query = query.eq('status', 'approved');
 
   const { data, error } = await query;
-  if (error) return includePending ? [] : sampleTokens.map(normalizeToken);
+  if (error) {
+    if (allowSampleData && !includePending) {
+      return (await import('./sample-data')).sampleTokens.map(normalizeToken);
+    }
+    return [];
+  }
   if (!data?.length) return [];
   return data.map((item) => normalizeToken(item as Partial<ListedToken>));
 }
