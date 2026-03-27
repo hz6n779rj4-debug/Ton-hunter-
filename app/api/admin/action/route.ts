@@ -60,7 +60,12 @@ export async function POST(request: Request) {
     const reason = String(form.get('reason') || '').trim();
     const { data, error } = await supabaseAdmin.from('tokens').select('admin_boost_votes,votes_24h').eq('address', address).single();
     if (error || !data) {
-      redirectUrl.searchParams.set('error', error?.message || 'Unable to load token votes.');
+      const message = error?.message || 'Unable to load token votes.';
+      if (message.includes('admin_boost_votes')) {
+        redirectUrl.searchParams.set('error', 'Missing column: tokens.admin_boost_votes. Add it in Supabase SQL Editor, then try again.');
+      } else {
+        redirectUrl.searchParams.set('error', message);
+      }
       return NextResponse.redirect(redirectUrl, 303);
     }
 
