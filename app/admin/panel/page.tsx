@@ -133,7 +133,7 @@ export default async function AdminPanelPage({
             <div className="mb-3 inline-flex rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-fuchsia-200">Banner ads manager</div>
             <h2 className="text-2xl font-semibold text-white">Publish header banners</h2>
             <p className="mt-2 text-sm text-slate-400">Upload a banner image, add the project link, set start and end dates, then publish. No redeploy needed.</p>
-            <form action="/api/admin/banner" method="post" encType="multipart/form-data" className="mt-5 grid gap-4">
+            <form action="/api/admin/banner" method="post" encType="multipart/form-data" className="mx-auto mt-5 grid w-full max-w-2xl gap-4">
               <input type="hidden" name="action" value="create" />
               <label className="grid gap-2 text-sm">
                 <span className="text-slate-300">Banner title</span>
