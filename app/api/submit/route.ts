@@ -55,5 +55,8 @@ export async function POST(request: Request) {
   redirectUrl.searchParams.set('ref', paymentReference);
   redirectUrl.searchParams.set('wallet', PAYMENT_WALLET);
   redirectUrl.searchParams.set('address', payload.address);
+  if (listingTier === 'fast') {
+    redirectUrl.searchParams.set('amount', '10');
+  }
   return NextResponse.redirect(redirectUrl, 303);
 }
