@@ -32,14 +32,14 @@ export async function POST(request: Request) {
 
   if (action === 'approve') {
     const { error } = await supabaseAdmin.from('tokens').update({ status: 'approved' }).eq('address', address);
-    if (error) redirectUrl.searchParams.set('error', error.message); else { redirectUrl.searchParams.set('message', 'Token approved.'); revalidatePath('/'); revalidatePath('/explore'); revalidatePath('/admin/panel'); revalidatePath(`/token/${address}`); }
+    if (error) redirectUrl.searchParams.set('error', error.message); else redirectUrl.searchParams.set('message', 'Token approved.');
     await logAction(address, action);
     return NextResponse.redirect(redirectUrl, 303);
   }
 
   if (action === 'reject') {
     const { error } = await supabaseAdmin.from('tokens').update({ status: 'rejected' }).eq('address', address);
-    if (error) redirectUrl.searchParams.set('error', error.message); else { redirectUrl.searchParams.set('message', 'Token rejected.'); revalidatePath('/'); revalidatePath('/explore'); revalidatePath('/admin/panel'); revalidatePath(`/token/${address}`); }
+    if (error) redirectUrl.searchParams.set('error', error.message); else redirectUrl.searchParams.set('message', 'Token rejected.');
     await logAction(address, action);
     return NextResponse.redirect(redirectUrl, 303);
   }
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       return NextResponse.redirect(redirectUrl, 303);
     }
     const { error: updateError } = await supabaseAdmin.from('tokens').update({ promoted: !data?.promoted }).eq('address', address);
-    if (updateError) redirectUrl.searchParams.set('error', updateError.message); else { redirectUrl.searchParams.set('message', `Promotion ${data?.promoted ? 'disabled' : 'enabled'}.`); revalidatePath('/'); revalidatePath('/explore'); revalidatePath('/admin/panel'); revalidatePath(`/token/${address}`); }
+    if (updateError) redirectUrl.searchParams.set('error', updateError.message); else redirectUrl.searchParams.set('message', `Promotion ${data?.promoted ? 'disabled' : 'enabled'}.`);
     await logAction(address, action, data?.promoted ? 0 : 1);
     return NextResponse.redirect(redirectUrl, 303);
   }
@@ -70,31 +70,47 @@ export async function POST(request: Request) {
       return NextResponse.redirect(redirectUrl, 303);
     }
 
+    if (action === 'reset-24h') {
+      const { error: updateError } = await supabaseAdmin
+        .from('tokens')
+        .update({ votes_24h: 0 })
+        .eq('address', address);
+
+      if (updateError) redirectUrl.searchParams.set('error', updateError.message);
+      else redirectUrl.searchParams.set('message', '24h votes reset.');
+
+      revalidatePath('/');
+      revalidatePath('/explore');
+      revalidatePath('/admin/panel');
+      revalidatePath(`/token/${address}`);
+      await logAction(address, action, 0, reason);
+      return NextResponse.redirect(redirectUrl, 303);
+    }
+
     const currentBoost = Number(data.admin_boost_votes || 0);
     const current24h = Number(data.votes_24h || 0);
     const currentAllTime = Number(data.votes_all_time || 0);
 
     let nextBoostVotes = currentBoost;
-    let next24hVotes = current24h;
-    let nextAllTimeVotes = currentAllTime;
+    let delta = 0;
 
-    if (action === 'reset-24h') {
-      next24hVotes = 0;
-    } else if (action === 'boost-votes') {
+    if (action === 'boost-votes') {
+      delta = amount;
       nextBoostVotes = currentBoost + amount;
-      next24hVotes = current24h + amount;
-      nextAllTimeVotes = currentAllTime + amount;
-    } else if (action === 'remove-votes') {
-      const removable = Math.min(currentBoost, amount);
-      nextBoostVotes = Math.max(0, currentBoost - amount);
-      next24hVotes = Math.max(0, current24h - removable);
-      nextAllTimeVotes = Math.max(0, currentAllTime - removable);
-    } else if (action === 'set-votes') {
-      const delta = amount - currentBoost;
-      nextBoostVotes = amount;
-      next24hVotes = Math.max(0, current24h + delta);
-      nextAllTimeVotes = Math.max(0, currentAllTime + delta);
     }
+
+    if (action === 'remove-votes') {
+      delta = -Math.min(currentBoost, amount);
+      nextBoostVotes = Math.max(0, currentBoost - amount);
+    }
+
+    if (action === 'set-votes') {
+      delta = Math.max(0, amount) - currentBoost;
+      nextBoostVotes = Math.max(0, amount);
+    }
+
+    const next24hVotes = Math.max(0, current24h + delta);
+    const nextAllTimeVotes = Math.max(0, currentAllTime + delta);
 
     const { error: updateError } = await supabaseAdmin
       .from('tokens')
@@ -108,16 +124,16 @@ export async function POST(request: Request) {
     if (updateError) {
       redirectUrl.searchParams.set('error', updateError.message);
     } else {
-      redirectUrl.searchParams.set('message', `Votes updated. Boost: ${nextBoostVotes}.`);
+      redirectUrl.searchParams.set('message', `Boost votes updated to ${nextBoostVotes}.`);
       revalidatePath('/');
       revalidatePath('/explore');
       revalidatePath('/admin/panel');
       revalidatePath(`/token/${address}`);
     }
+
     await logAction(address, action, amount, reason);
     return NextResponse.redirect(redirectUrl, 303);
   }
-
 
   redirectUrl.searchParams.set('error', 'Unknown action');
   return NextResponse.redirect(redirectUrl, 303);
