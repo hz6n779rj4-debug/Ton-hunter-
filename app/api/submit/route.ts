@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   const form = await request.formData();
   const logo = form.get('logo');
   const listingTier = String(form.get('listing_tier') || 'free') as 'free' | 'fast';
-  const paymentReference = `TH-${randomUUID().slice(0, 8).toUpperCase()}`;
+  const paymentReference = String(form.get('payment_reference') || `TH-${randomUUID().slice(0, 8).toUpperCase()}`);
 
   let logoPath = '/placeholder-token.png';
   if (logo instanceof File && supabaseAdmin) {
@@ -37,7 +37,6 @@ export async function POST(request: Request) {
     telegram: String(form.get('telegram') || ''),
     twitter: String(form.get('twitter') || ''),
     description: String(form.get('description') || ''),
-    category: String(form.get('category') || 'Meme'),
     verified_team: false,
     is_claimed: false,
     listed_at: new Date().toISOString(),
