@@ -122,3 +122,23 @@ create index if not exists payments_status_idx on public.payments(status);
 alter table public.payments enable row level security;
 drop policy if exists "service role manages payments" on public.payments;
 create policy "service role manages payments" on public.payments for all using (false) with check (false);
+
+alter table public.tokens add column if not exists category text default 'Meme';
+alter table public.tokens add column if not exists verified_team boolean not null default false;
+alter table public.tokens add column if not exists is_claimed boolean not null default false;
+alter table public.tokens add column if not exists claimed_by_telegram_id text;
+alter table public.tokens add column if not exists claimed_by_username text;
+
+create table if not exists public.claim_requests (
+  id uuid primary key default gen_random_uuid(),
+  token_address text not null,
+  telegram_id text,
+  username text,
+  proof text not null,
+  status text not null default 'pending',
+  created_at timestamptz not null default now()
+);
+
+alter table public.claim_requests enable row level security;
+drop policy if exists "service role manages claim requests" on public.claim_requests;
+create policy "service role manages claim requests" on public.claim_requests for all using (false) with check (false);
