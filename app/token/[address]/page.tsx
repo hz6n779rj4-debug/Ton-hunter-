@@ -1,9 +1,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ExternalLink, Globe, MessageCircle, Twitter, Vote, BadgeCheck } from 'lucide-react';
+import {
+  ExternalLink,
+  Globe,
+  MessageCircle,
+  Twitter,
+  Vote,
+  BadgeCheck,
+} from 'lucide-react';
 import { getTokenByAddress, getTokenScore } from '@/lib/ton';
-import { formatCompact, shortAddress } from '@/lib/utils';
+import { formatCompact, formatUsd, shortAddress } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -107,15 +114,38 @@ export default async function TokenPage({
           <h2 className="mb-4 text-xl font-semibold">Token Stats</h2>
 
           <div className="grid grid-cols-2 gap-4">
+            <Stat
+              label="Price"
+              value={token.price_usd ? formatUsd(token.price_usd) : '$0.00'}
+            />
+            <Stat
+              label="Market Cap"
+              value={token.market_cap ? formatUsd(token.market_cap) : '$0.00'}
+            />
+            <Stat
+              label="24H Volume"
+              value={token.volume_24h ? formatUsd(token.volume_24h) : '$0.00'}
+            />
+            <Stat
+              label="Holders"
+              value={token.holders ? formatCompact(token.holders) : '0'}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="card p-6">
+          <h2 className="mb-4 text-xl font-semibold">Voting Stats</h2>
+
+          <div className="grid grid-cols-2 gap-4">
             <Stat label="24H Votes" value={formatCompact(token.votes_24h || 0)} />
             <Stat label="Public Votes" value={formatCompact(token.votes_all_time || 0)} />
             <Stat label="Boost Votes" value={formatCompact(token.admin_boost_votes || 0)} />
             <Stat label="Total Score" value={formatCompact(totalScore || 0)} />
           </div>
         </div>
-      </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="card p-6">
           <h2 className="text-xl font-semibold">Community actions</h2>
 
@@ -166,16 +196,16 @@ export default async function TokenPage({
             </Link>
           </div>
         </div>
+      </div>
 
-        <div className="card p-6">
-          <h2 className="text-xl font-semibold">Listing profile</h2>
+      <div className="mt-6 card p-6">
+        <h2 className="text-xl font-semibold">Listing profile</h2>
 
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <Line label="Project name" value={token.name} />
-            <Line label="Ticker" value={`$${token.symbol}`} />
-            <Line label="Address" value={normalizedAddress} />
-            <Line label="Status" value={token.promoted ? 'Promoted' : 'Standard listing'} />
-          </div>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <Line label="Project name" value={token.name} />
+          <Line label="Ticker" value={`$${token.symbol}`} />
+          <Line label="Address" value={normalizedAddress} />
+          <Line label="Status" value={token.promoted ? 'Promoted' : 'Standard listing'} />
         </div>
       </div>
     </section>
