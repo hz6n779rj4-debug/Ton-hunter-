@@ -16,7 +16,8 @@ export default async function TokenPage({
 }) {
   const { address } = await params;
   const query = (await searchParams) || {};
-  const token = await getTokenByAddress(address);
+  const normalizedAddress = decodeURIComponent(address);
+  const token = await getTokenByAddress(normalizedAddress);
   if (!token || token.status === 'rejected') notFound();
 
   const totalScore = getTokenScore(token);
@@ -73,10 +74,10 @@ export default async function TokenPage({
           {query.vote === 'error' ? <Notice tone="error" text="Vote could not be saved right now." /> : null}
           <div className="mt-5 flex flex-wrap gap-3">
             <form action="/api/vote" method="post">
-              <input type="hidden" name="address" value={token.address} />
+              <input type="hidden" name="address" value={normalizedAddress} />
               <button className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 font-medium text-slate-950"><Vote className="h-4 w-4" />Vote this coin</button>
             </form>
-            <Link href={`/promote?address=${token.address}`} className="rounded-full border border-stroke px-5 py-3 font-medium hover:border-cyan-400/40">Promote this coin</Link>
+            <Link href={`/promote?address=${encodeURIComponent(normalizedAddress)}`} className="rounded-full border border-stroke px-5 py-3 font-medium hover:border-cyan-400/40">Promote this coin</Link>
           </div>
         </div>
         <div className="card p-6">
@@ -84,7 +85,7 @@ export default async function TokenPage({
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <Line label="Project name" value={token.name} />
             <Line label="Ticker" value={`$${token.symbol}`} />
-            <Line label="Address" value={token.address} />
+            <Line label="Address" value={normalizedAddress} />
             <Line label="Category" value={token.category || 'General'} />
             <Line label="Status" value={token.promoted ? 'Promoted' : 'Standard listing'} />
             <Line label="Listed at" value={new Date(token.listed_at).toLocaleString()} />
