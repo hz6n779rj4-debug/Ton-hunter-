@@ -129,8 +129,20 @@ export async function getTokens(includePending = false): Promise<ListedToken[]> 
 }
 
 export async function getTokenByAddress(address: string): Promise<ListedToken | null> {
+  const normalizedAddress = decodeURIComponent(String(address || '')).trim();
+  if (!normalizedAddress) return null;
+
+  if (supabaseAdmin) {
+    const { data } = await supabaseAdmin
+      .from('tokens')
+      .select('*')
+      .eq('address', normalizedAddress)
+      .maybeSingle();
+    if (data) return enrichToken(normalizeToken(data as Partial<ListedToken>));
+  }
+
   const tokens = await getTokens(true);
-  return tokens.find((token) => token.address === address) || null;
+  return tokens.find((token) => decodeURIComponent(String(token.address || '')).trim() === normalizedAddress) || null;
 }
 
 export async function getHomepageData() {
