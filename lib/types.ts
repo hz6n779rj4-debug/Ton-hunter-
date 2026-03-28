@@ -1,5 +1,3 @@
-export type TokenCategory = 'Meme' | 'New Launches';
-
 export type ListedToken = {
   id: string;
   name: string;
@@ -10,7 +8,6 @@ export type ListedToken = {
   website?: string;
   telegram?: string;
   twitter?: string;
-  category?: TokenCategory;
   verified_team?: boolean;
   is_claimed?: boolean;
   claimed_by_telegram_id?: string | null;

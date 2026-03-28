@@ -1,5 +1,5 @@
 import { storageBucket, supabaseAdmin } from './supabase';
-import { ListedToken, TokenCategory } from './types';
+import { ListedToken } from './types';
 
 const TONAPI_BASE = process.env.TONAPI_BASE_URL || 'https://tonapi.io/v2';
 const STON_API_BASE = process.env.STON_API_BASE_URL || 'https://api.ston.fi/v1';
@@ -14,10 +14,6 @@ export function getTokenScore(token: ListedToken) {
   return Number(token.votes_all_time || 0) + Number(token.admin_boost_votes || 0);
 }
 
-function normalizeCategory(value?: string | null): TokenCategory {
-  return value === 'Meme' ? 'Meme' : 'New Launches';
-}
-
 function normalizeToken(token: Partial<ListedToken>): ListedToken {
   return {
     id: String(token.id || crypto.randomUUID()),
@@ -29,7 +25,6 @@ function normalizeToken(token: Partial<ListedToken>): ListedToken {
     website: token.website || undefined,
     telegram: token.telegram || undefined,
     twitter: token.twitter || undefined,
-    category: normalizeCategory(token.category),
     verified_team: Boolean(token.verified_team),
     is_claimed: Boolean(token.is_claimed),
     claimed_by_telegram_id: token.claimed_by_telegram_id || null,
@@ -55,6 +50,7 @@ function normalizeToken(token: Partial<ListedToken>): ListedToken {
 }
 
 const allowSampleData = process.env.ALLOW_SAMPLE_DATA === 'true' && process.env.NODE_ENV !== 'production';
+const clean = (value?: string | null) => decodeURIComponent(String(value || '')).replace(/\s+/g, '').trim();
 
 async function getDbTokens(includePending = false): Promise<ListedToken[]> {
   if (!supabaseAdmin) {
@@ -128,21 +124,21 @@ export async function getTokens(includePending = false): Promise<ListedToken[]> 
   return Promise.all(tokens.map((token) => enrichToken(token)));
 }
 
-export async function getTokenByAddress(address: string): Promise<ListedToken | null> {
-  const normalizedAddress = decodeURIComponent(String(address || '')).trim();
-  if (!normalizedAddress) return null;
+export async function getTokenByAddress(addressOrId: string): Promise<ListedToken | null> {
+  const slug = decodeURIComponent(String(addressOrId || '')).trim();
+  if (!slug) return null;
 
   if (supabaseAdmin) {
-    const { data } = await supabaseAdmin
-      .from('tokens')
-      .select('*')
-      .eq('address', normalizedAddress)
-      .maybeSingle();
-    if (data) return enrichToken(normalizeToken(data as Partial<ListedToken>));
+    const byId = await supabaseAdmin.from('tokens').select('*').eq('id', slug).maybeSingle();
+    if (byId.data) return enrichToken(normalizeToken(byId.data as Partial<ListedToken>));
+
+    const byAddress = await supabaseAdmin.from('tokens').select('*').eq('address', slug).maybeSingle();
+    if (byAddress.data) return enrichToken(normalizeToken(byAddress.data as Partial<ListedToken>));
   }
 
   const tokens = await getTokens(true);
-  return tokens.find((token) => decodeURIComponent(String(token.address || '')).trim() === normalizedAddress) || null;
+  const wanted = clean(slug);
+  return tokens.find((token) => clean(token.id) === wanted || clean(token.address) === wanted) || null;
 }
 
 export async function getHomepageData() {
@@ -154,8 +150,6 @@ export async function getHomepageData() {
   const todaysBest = [...tokens].sort((a, b) => (b.votes_24h || 0) - (a.votes_24h || 0)).slice(0, 6);
   const allTimeBest = [...tokens].sort((a, b) => getTokenScore(b) - getTokenScore(a)).slice(0, 6);
   const newListings = [...tokens].sort((a, b) => new Date(b.listed_at).getTime() - new Date(a.listed_at).getTime()).slice(0, 6);
-  const meme = tokens.filter((token) => token.category === 'Meme').sort((a, b) => getTokenScore(b) - getTokenScore(a)).slice(0, 6);
-  const newLaunches = tokens.filter((token) => token.category === 'New Launches').sort((a, b) => getTokenScore(b) - getTokenScore(a)).slice(0, 6);
   const verifiedTeam = tokens.filter((token) => token.verified_team).sort((a, b) => getTokenScore(b) - getTokenScore(a)).slice(0, 6);
 
   return {
@@ -163,8 +157,6 @@ export async function getHomepageData() {
     todaysBest,
     allTimeBest,
     newListings,
-    meme,
-    newLaunches,
     verifiedTeam,
     trending: todaysBest,
     topVoted: allTimeBest,
