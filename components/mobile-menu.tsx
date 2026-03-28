@@ -10,8 +10,6 @@ const links = [
   { href: '/today-best', label: "Today's Best" },
   { href: '/all-time-best', label: 'All-Time Best' },
   { href: '/new-listings', label: 'New Listings' },
-  { href: '/explore?category=Meme', label: 'Meme' },
-  { href: '/explore?category=New%20Launches', label: 'New Launches' },
   { href: '/claim-project', label: 'Claim Project' },
   { href: '/banner-ads', label: 'Banner Ads' },
   { href: '/admin', label: 'Owner Dashboard' },

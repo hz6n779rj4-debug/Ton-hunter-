@@ -23,7 +23,6 @@ export function TokenCard({ token, compact = false, rank }: { token: ListedToken
             </div>
             <p className="truncate text-sm text-slate-400">${token.symbol} • {shortAddress(token.address)}</p>
             <div className="mt-1 flex flex-wrap gap-2 text-[11px] text-slate-400">
-              <span className="rounded-full border border-stroke/70 px-2 py-0.5">{token.category || 'New Launches'}</span>
               {token.is_claimed ? <span className="rounded-full border border-cyan-400/25 px-2 py-0.5 text-cyan-200">Claimed</span> : null}
             </div>
           </div>
@@ -50,7 +49,7 @@ export function TokenCard({ token, compact = false, rank }: { token: ListedToken
           <span className="inline-flex items-center gap-1"><Sparkles className="h-3.5 w-3.5" />{formatCompact(token.admin_boost_votes || 0)} boost</span>
           <span className="text-slate-300">{formatCompact(totalScore)} total</span>
         </div>
-        <Link href={`/token/${encodeURIComponent(token.address)}`} className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View <ArrowUpRight className="h-4 w-4" /></Link>
+        <Link href={`/token/${encodeURIComponent(token.id || token.address)}`} className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View <ArrowUpRight className="h-4 w-4" /></Link>
       </div>
     </div>
   );
