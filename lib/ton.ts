@@ -1,5 +1,5 @@
 import { storageBucket, supabaseAdmin } from './supabase';
-import { ListedToken } from './types';
+import { ListedToken, TokenCategory } from './types';
 
 const TONAPI_BASE = process.env.TONAPI_BASE_URL || 'https://tonapi.io/v2';
 const STON_API_BASE = process.env.STON_API_BASE_URL || 'https://api.ston.fi/v1';
@@ -14,6 +14,10 @@ export function getTokenScore(token: ListedToken) {
   return Number(token.votes_all_time || 0) + Number(token.admin_boost_votes || 0);
 }
 
+function normalizeCategory(value?: string | null): TokenCategory {
+  return value === 'Meme' ? 'Meme' : 'New Launches';
+}
+
 function normalizeToken(token: Partial<ListedToken>): ListedToken {
   return {
     id: String(token.id || crypto.randomUUID()),
@@ -25,7 +29,11 @@ function normalizeToken(token: Partial<ListedToken>): ListedToken {
     website: token.website || undefined,
     telegram: token.telegram || undefined,
     twitter: token.twitter || undefined,
-    category: token.category || 'General',
+    category: normalizeCategory(token.category),
+    verified_team: Boolean(token.verified_team),
+    is_claimed: Boolean(token.is_claimed),
+    claimed_by_telegram_id: token.claimed_by_telegram_id || null,
+    claimed_by_username: token.claimed_by_username || null,
     listed_at: String(token.listed_at || new Date().toISOString()),
     promoted: Boolean(token.promoted),
     votes_24h: Number(token.votes_24h || 0),
@@ -131,10 +139,23 @@ export async function getHomepageData() {
   const promoted = tokens
     .filter((token) => token.promoted && (!token.promotion_expires_at || new Date(token.promotion_expires_at).getTime() > now))
     .slice(0, 6);
-  const trending = [...tokens].sort((a, b) => (b.votes_24h || 0) - (a.votes_24h || 0)).slice(0, 10);
-  const topVoted = [...tokens].sort((a, b) => getTokenScore(b) - getTokenScore(a)).slice(0, 6);
-  const topGainers = [...tokens].sort((a, b) => (b.change_24h_percent || 0) - (a.change_24h_percent || 0)).slice(0, 6);
-  const latest = [...tokens].sort((a, b) => new Date(b.listed_at).getTime() - new Date(a.listed_at).getTime()).slice(0, 8);
+  const todaysBest = [...tokens].sort((a, b) => (b.votes_24h || 0) - (a.votes_24h || 0)).slice(0, 6);
+  const allTimeBest = [...tokens].sort((a, b) => getTokenScore(b) - getTokenScore(a)).slice(0, 6);
+  const newListings = [...tokens].sort((a, b) => new Date(b.listed_at).getTime() - new Date(a.listed_at).getTime()).slice(0, 6);
+  const meme = tokens.filter((token) => token.category === 'Meme').sort((a, b) => getTokenScore(b) - getTokenScore(a)).slice(0, 6);
+  const newLaunches = tokens.filter((token) => token.category === 'New Launches').sort((a, b) => getTokenScore(b) - getTokenScore(a)).slice(0, 6);
+  const verifiedTeam = tokens.filter((token) => token.verified_team).sort((a, b) => getTokenScore(b) - getTokenScore(a)).slice(0, 6);
 
-  return { promoted, trending, topVoted, topGainers, latest };
+  return {
+    promoted,
+    todaysBest,
+    allTimeBest,
+    newListings,
+    meme,
+    newLaunches,
+    verifiedTeam,
+    trending: todaysBest,
+    topVoted: allTimeBest,
+    latest: newListings,
+  };
 }

@@ -1,3 +1,5 @@
+export type TokenCategory = 'Meme' | 'New Launches';
+
 export type ListedToken = {
   id: string;
   name: string;
@@ -8,7 +10,11 @@ export type ListedToken = {
   website?: string;
   telegram?: string;
   twitter?: string;
-  category?: string;
+  category?: TokenCategory;
+  verified_team?: boolean;
+  is_claimed?: boolean;
+  claimed_by_telegram_id?: string | null;
+  claimed_by_username?: string | null;
   listed_at: string;
   promoted: boolean;
   votes_24h: number;
@@ -45,4 +51,14 @@ export type VoteState = {
   cooldownHours?: number;
   nextVoteAt?: string | null;
   message?: string;
+};
+
+export type ClaimRequest = {
+  id: string;
+  token_address: string;
+  telegram_id?: string | null;
+  username?: string | null;
+  proof: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
 };
