@@ -1,16 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import {
-  ExternalLink,
-  Globe,
-  MessageCircle,
-  Twitter,
-  Vote,
-  BadgeCheck,
-} from 'lucide-react';
+import { ExternalLink, Globe, MessageCircle, Twitter, Vote, BadgeCheck } from 'lucide-react';
 import { getTokenByAddress, getTokenScore } from '@/lib/ton';
-import { formatCompact, formatUsd, shortAddress } from '@/lib/utils';
+import { formatCompact, formatPercent, formatUsd, shortAddress } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -63,47 +56,38 @@ export default async function TokenPage({
                     Verified Team
                   </span>
                 ) : null}
+
+                {token.category ? (
+                  <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs text-cyan-200">
+                    {token.category}
+                  </span>
+                ) : null}
+
+                {token.is_claimed ? (
+                  <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">
+                    Claimed
+                  </span>
+                ) : null}
               </div>
 
               <p className="text-slate-300">
                 ${token.symbol} • {shortAddress(token.address)}
               </p>
 
-              <p className="mt-4 max-w-2xl text-slate-300">
-                {token.description}
-              </p>
+              <p className="mt-4 max-w-2xl text-slate-300">{token.description}</p>
 
               <div className="mt-5 flex flex-wrap gap-3">
                 {token.website ? (
-                  <Social
-                    href={token.website}
-                    label="Website"
-                    icon={<Globe className="h-4 w-4" />}
-                  />
+                  <Social href={token.website} label="Website" icon={<Globe className="h-4 w-4" />} />
                 ) : null}
-
                 {token.telegram ? (
-                  <Social
-                    href={token.telegram}
-                    label="Telegram"
-                    icon={<MessageCircle className="h-4 w-4" />}
-                  />
+                  <Social href={token.telegram} label="Telegram" icon={<MessageCircle className="h-4 w-4" />} />
                 ) : null}
-
                 {token.twitter ? (
-                  <Social
-                    href={token.twitter}
-                    label="X"
-                    icon={<Twitter className="h-4 w-4" />}
-                  />
+                  <Social href={token.twitter} label="X" icon={<Twitter className="h-4 w-4" />} />
                 ) : null}
-
                 {token.chart_url ? (
-                  <Social
-                    href={token.chart_url}
-                    label="Chart"
-                    icon={<ExternalLink className="h-4 w-4" />}
-                  />
+                  <Social href={token.chart_url} label="Chart" icon={<ExternalLink className="h-4 w-4" />} />
                 ) : null}
               </div>
             </div>
@@ -112,24 +96,13 @@ export default async function TokenPage({
 
         <div className="card p-6">
           <h2 className="mb-4 text-xl font-semibold">Token Stats</h2>
-
           <div className="grid grid-cols-2 gap-4">
-            <Stat
-              label="Price"
-              value={token.price_usd ? formatUsd(token.price_usd) : '$0.00'}
-            />
-            <Stat
-              label="Market Cap"
-              value={token.market_cap ? formatUsd(token.market_cap) : '$0.00'}
-            />
-            <Stat
-              label="24H Volume"
-              value={token.volume_24h ? formatUsd(token.volume_24h) : '$0.00'}
-            />
-            <Stat
-              label="Holders"
-              value={token.holders ? formatCompact(token.holders) : '0'}
-            />
+            <Stat label="Price" value={formatUsd(token.price_usd)} />
+            <Stat label="Market Cap" value={formatUsd(token.market_cap_usd)} />
+            <Stat label="Liquidity" value={formatUsd(token.liquidity_usd)} />
+            <Stat label="24H Volume" value={formatUsd(token.volume_24h_usd)} />
+            <Stat label="Holders" value={formatCompact(token.holders)} />
+            <Stat label="24H Change" value={formatPercent(token.change_24h_percent)} />
           </div>
         </div>
       </div>
@@ -137,28 +110,22 @@ export default async function TokenPage({
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="card p-6">
           <h2 className="mb-4 text-xl font-semibold">Voting Stats</h2>
-
           <div className="grid grid-cols-2 gap-4">
-            <Stat label="24H Votes" value={formatCompact(token.votes_24h || 0)} />
-            <Stat label="Public Votes" value={formatCompact(token.votes_all_time || 0)} />
-            <Stat label="Boost Votes" value={formatCompact(token.admin_boost_votes || 0)} />
-            <Stat label="Total Score" value={formatCompact(totalScore || 0)} />
+            <Stat label="24H Votes" value={formatCompact(token.votes_24h)} />
+            <Stat label="Public Votes" value={formatCompact(token.votes_all_time)} />
+            <Stat label="Boost Votes" value={formatCompact(token.admin_boost_votes)} />
+            <Stat label="Total Score" value={formatCompact(totalScore)} />
           </div>
         </div>
 
         <div className="card p-6">
           <h2 className="text-xl font-semibold">Community actions</h2>
-
           <p className="mt-2 text-slate-400">
-            Normal users can vote once per token every 24 hours. Owner dashboard votes stay
-            separate as boost votes.
+            Normal users can vote once per token every 24 hours. Owner dashboard votes stay separate as boost votes.
           </p>
 
           {query.vote === 'success' ? (
-            <Notice
-              tone="success"
-              text="Vote counted. You can vote this token again after 24 hours."
-            />
+            <Notice tone="success" text="Vote counted. You can vote this token again after 24 hours." />
           ) : null}
 
           {query.vote === 'cooldown' ? (
@@ -200,27 +167,20 @@ export default async function TokenPage({
 
       <div className="mt-6 card p-6">
         <h2 className="text-xl font-semibold">Listing profile</h2>
-
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <Line label="Project name" value={token.name} />
           <Line label="Ticker" value={`$${token.symbol}`} />
           <Line label="Address" value={normalizedAddress} />
+          <Line label="Category" value={token.category || 'General'} />
           <Line label="Status" value={token.promoted ? 'Promoted' : 'Standard listing'} />
+          <Line label="Listed at" value={new Date(token.listed_at).toLocaleString()} />
         </div>
       </div>
     </section>
   );
 }
 
-function Social({
-  href,
-  label,
-  icon,
-}: {
-  href: string;
-  label: string;
-  icon: React.ReactNode;
-}) {
+function Social({ href, label, icon }: { href: string; label: string; icon: React.ReactNode }) {
   return (
     <Link
       href={href}
@@ -251,13 +211,7 @@ function Line({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Notice({
-  tone,
-  text,
-}: {
-  tone: 'success' | 'warning' | 'error';
-  text: string;
-}) {
+function Notice({ tone, text }: { tone: 'success' | 'warning' | 'error'; text: string }) {
   const classes =
     tone === 'success'
       ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
