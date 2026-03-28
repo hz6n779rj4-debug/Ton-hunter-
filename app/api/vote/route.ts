@@ -21,18 +21,15 @@ function redirectWithReason(request: Request, address: string, reason: string) {
 
 export async function POST(request: Request) {
   const form = await request.formData();
-  const rawAddress = String(form.get('address') || '').trim();
-  const decodedAddress = decodeURIComponent(rawAddress || '').trim();
-  const candidateAddresses = Array.from(
-    new Set([rawAddress, decodedAddress].filter(Boolean))
-  );
+  const tokenId = String(form.get('tokenId') || '').trim();
 
-  if (!candidateAddresses.length) {
-    return redirectWithReason(request, 'unknown', 'missing_address');
+  if (!tokenId) {
+    const fallback = String(form.get('address') || 'unknown').trim() || 'unknown';
+    return redirectWithReason(request, fallback, 'missing_token_id');
   }
 
   if (!supabaseAdmin) {
-    return redirectWithReason(request, candidateAddresses[0], 'missing_service_role');
+    return redirectWithReason(request, 'unknown', 'missing_service_role');
   }
 
   const cookieStore = await cookies();
@@ -46,23 +43,14 @@ export async function POST(request: Request) {
     voterKey = `${ip}:${userAgent.slice(0, 80)}:${randomUUID().slice(0, 8)}`;
   }
 
-  const { data: tokenRows, error: tokenError } = await supabaseAdmin
+  const { data: token, error: tokenError } = await supabaseAdmin
     .from('tokens')
-    .select('id,address,votes_24h,votes_all_time,status')
-    .in('address', candidateAddresses)
-    .limit(5);
+    .select('id,address,votes_24h,votes_all_time')
+    .eq('id', tokenId)
+    .maybeSingle();
 
-  if (tokenError) {
-    return redirectWithReason(request, candidateAddresses[0], `token_read_failed`);
-  }
-
-  const token =
-    tokenRows?.find((row) => row.address === rawAddress) ||
-    tokenRows?.find((row) => row.address === decodedAddress) ||
-    tokenRows?.[0];
-
-  if (!token) {
-    return redirectWithReason(request, candidateAddresses[0], 'token_not_found');
+  if (tokenError || !token) {
+    return redirectWithReason(request, 'unknown', 'token_not_found');
   }
 
   const { data: existingVote, error: existingVoteError } = await supabaseAdmin
@@ -99,14 +87,11 @@ export async function POST(request: Request) {
     return response;
   }
 
-  const nextVotes24h = Number(token.votes_24h || 0) + 1;
-  const nextVotesAllTime = Number(token.votes_all_time || 0) + 1;
-
   const { error: updateError } = await supabaseAdmin
     .from('tokens')
     .update({
-      votes_24h: nextVotes24h,
-      votes_all_time: nextVotesAllTime,
+      votes_24h: Number(token.votes_24h || 0) + 1,
+      votes_all_time: Number(token.votes_all_time || 0) + 1,
     })
     .eq('id', token.id);
 
@@ -114,7 +99,7 @@ export async function POST(request: Request) {
     return redirectWithReason(request, token.address, 'token_update_failed');
   }
 
-  const { error: logInsertError } = await supabaseAdmin
+  const { error: insertError } = await supabaseAdmin
     .from('vote_logs')
     .insert({
       token_address: token.address,
@@ -122,7 +107,7 @@ export async function POST(request: Request) {
       source: 'site',
     });
 
-  if (logInsertError) {
+  if (insertError) {
     return redirectWithReason(request, token.address, 'vote_log_insert_failed');
   }
 
