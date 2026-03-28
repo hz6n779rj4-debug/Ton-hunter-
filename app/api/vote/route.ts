@@ -12,20 +12,27 @@ function cutoffIso() {
   return new Date(Date.now() - COOLDOWN_HOURS * 60 * 60 * 1000).toISOString();
 }
 
+function redirectWithReason(request: Request, address: string, reason: string) {
+  const url = new URL(`/token/${encodeURIComponent(address)}`, request.url);
+  url.searchParams.set('vote', 'error');
+  url.searchParams.set('reason', reason);
+  return NextResponse.redirect(url, 303);
+}
+
 export async function POST(request: Request) {
   const form = await request.formData();
-  const address = decodeURIComponent(String(form.get('address') || '')).trim();
-  const redirectUrl = new URL(`/token/${encodeURIComponent(address)}`, request.url);
+  const rawAddress = String(form.get('address') || '').trim();
+  const decodedAddress = decodeURIComponent(rawAddress || '').trim();
+  const candidateAddresses = Array.from(
+    new Set([rawAddress, decodedAddress].filter(Boolean))
+  );
 
-  if (!address) {
-    redirectUrl.searchParams.set('vote', 'error');
-    return NextResponse.redirect(redirectUrl, 303);
+  if (!candidateAddresses.length) {
+    return redirectWithReason(request, 'unknown', 'missing_address');
   }
 
   if (!supabaseAdmin) {
-    redirectUrl.searchParams.set('vote', 'error');
-    redirectUrl.searchParams.set('reason', 'missing_service_role');
-    return NextResponse.redirect(redirectUrl, 303);
+    return redirectWithReason(request, candidateAddresses[0], 'missing_service_role');
   }
 
   const cookieStore = await cookies();
@@ -35,25 +42,33 @@ export async function POST(request: Request) {
     const headerStore = await headers();
     const forwarded = headerStore.get('x-forwarded-for') || '';
     const userAgent = headerStore.get('user-agent') || 'browser';
-    voterKey = `${forwarded.split(',')[0] || 'anon'}:${userAgent.slice(0, 80)}:${randomUUID().slice(0, 8)}`;
+    const ip = forwarded.split(',')[0]?.trim() || 'anon';
+    voterKey = `${ip}:${userAgent.slice(0, 80)}:${randomUUID().slice(0, 8)}`;
   }
 
-  const { data: token, error: tokenError } = await supabaseAdmin
+  const { data: tokenRows, error: tokenError } = await supabaseAdmin
     .from('tokens')
-    .select('id,address,votes_24h,votes_all_time')
-    .eq('address', address)
-    .maybeSingle();
+    .select('id,address,votes_24h,votes_all_time,status')
+    .in('address', candidateAddresses)
+    .limit(5);
 
-  if (tokenError || !token) {
-    redirectUrl.searchParams.set('vote', 'error');
-    redirectUrl.searchParams.set('reason', 'token_not_found');
-    return NextResponse.redirect(redirectUrl, 303);
+  if (tokenError) {
+    return redirectWithReason(request, candidateAddresses[0], `token_read_failed`);
+  }
+
+  const token =
+    tokenRows?.find((row) => row.address === rawAddress) ||
+    tokenRows?.find((row) => row.address === decodedAddress) ||
+    tokenRows?.[0];
+
+  if (!token) {
+    return redirectWithReason(request, candidateAddresses[0], 'token_not_found');
   }
 
   const { data: existingVote, error: existingVoteError } = await supabaseAdmin
     .from('vote_logs')
     .select('created_at')
-    .eq('token_address', address)
+    .eq('token_address', token.address)
     .eq('voter_key', voterKey)
     .gte('created_at', cutoffIso())
     .order('created_at', { ascending: false })
@@ -61,9 +76,7 @@ export async function POST(request: Request) {
     .maybeSingle();
 
   if (existingVoteError) {
-    redirectUrl.searchParams.set('vote', 'error');
-    redirectUrl.searchParams.set('reason', 'vote_log_read_failed');
-    return NextResponse.redirect(redirectUrl, 303);
+    return redirectWithReason(request, token.address, 'vote_log_read_failed');
   }
 
   if (existingVote?.created_at) {
@@ -71,10 +84,11 @@ export async function POST(request: Request) {
       new Date(existingVote.created_at).getTime() + COOLDOWN_HOURS * 60 * 60 * 1000
     ).toISOString();
 
-    redirectUrl.searchParams.set('vote', 'cooldown');
-    redirectUrl.searchParams.set('next', nextVoteAt);
+    const url = new URL(`/token/${encodeURIComponent(token.address)}`, request.url);
+    url.searchParams.set('vote', 'cooldown');
+    url.searchParams.set('next', nextVoteAt);
 
-    const response = NextResponse.redirect(redirectUrl, 303);
+    const response = NextResponse.redirect(url, 303);
     response.cookies.set(VOTE_COOKIE, voterKey, {
       httpOnly: true,
       sameSite: 'lax',
@@ -94,31 +108,28 @@ export async function POST(request: Request) {
       votes_24h: nextVotes24h,
       votes_all_time: nextVotesAllTime,
     })
-    .eq('address', address);
+    .eq('id', token.id);
 
   if (updateError) {
-    redirectUrl.searchParams.set('vote', 'error');
-    redirectUrl.searchParams.set('reason', 'token_update_failed');
-    return NextResponse.redirect(redirectUrl, 303);
+    return redirectWithReason(request, token.address, 'token_update_failed');
   }
 
-  const { error: insertLogError } = await supabaseAdmin
+  const { error: logInsertError } = await supabaseAdmin
     .from('vote_logs')
     .insert({
-      token_address: address,
+      token_address: token.address,
       voter_key: voterKey,
       source: 'site',
     });
 
-  if (insertLogError) {
-    redirectUrl.searchParams.set('vote', 'error');
-    redirectUrl.searchParams.set('reason', 'vote_log_insert_failed');
-    return NextResponse.redirect(redirectUrl, 303);
+  if (logInsertError) {
+    return redirectWithReason(request, token.address, 'vote_log_insert_failed');
   }
 
-  redirectUrl.searchParams.set('vote', 'success');
+  const url = new URL(`/token/${encodeURIComponent(token.address)}`, request.url);
+  url.searchParams.set('vote', 'success');
 
-  const response = NextResponse.redirect(redirectUrl, 303);
+  const response = NextResponse.redirect(url, 303);
   response.cookies.set(VOTE_COOKIE, voterKey, {
     httpOnly: true,
     sameSite: 'lax',
