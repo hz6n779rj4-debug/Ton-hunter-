@@ -34,7 +34,6 @@ export default async function TokenPage({
                 <h1 className="text-3xl font-bold">{token.name}</h1>
                 {token.promoted ? <span className="rounded-full bg-violet-400/10 px-3 py-1 text-xs text-violet-200">Promoted</span> : null}
                 {token.verified_team ? <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200"><BadgeCheck className="h-3.5 w-3.5" />Verified Team</span> : null}
-                {token.category ? <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs text-cyan-200">{token.category}</span> : null}
                 {token.is_claimed ? <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Claimed</span> : null}
               </div>
               <p className="text-slate-300">${token.symbol} • {shortAddress(token.address)}</p>
@@ -86,7 +85,6 @@ export default async function TokenPage({
             <Line label="Project name" value={token.name} />
             <Line label="Ticker" value={`$${token.symbol}`} />
             <Line label="Address" value={normalizedAddress} />
-            <Line label="Category" value={token.category || 'General'} />
             <Line label="Status" value={token.promoted ? 'Promoted' : 'Standard listing'} />
             <Line label="Listed at" value={new Date(token.listed_at).toLocaleString()} />
           </div>
