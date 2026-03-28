@@ -7,3 +7,5 @@ img,svg,video,canvas,iframe{max-width:100%;height:auto}input,textarea,select,but
 main,section,div{max-width:100%;}
 
 .safe-wrap{overflow-wrap:anywhere;word-break:break-word}
+
+body.menu-open{overflow:hidden;touch-action:none}
