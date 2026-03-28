@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowUpRight, TrendingUp, Vote, Sparkles } from 'lucide-react';
+import { ArrowUpRight, TrendingUp, Vote, Sparkles, BadgeCheck } from 'lucide-react';
 import { ListedToken } from '@/lib/types';
 import { formatCompact, formatPercent, formatUsd, shortAddress } from '@/lib/utils';
 import { getTokenScore } from '@/lib/ton';
@@ -19,8 +19,13 @@ export function TokenCard({ token, compact = false, rank }: { token: ListedToken
               {rank ? <span className="text-xs font-semibold text-cyan-300">#{rank}</span> : null}
               <h3 className="truncate text-lg font-semibold text-white">{token.name}</h3>
               {token.promoted ? <span className="rounded-full border border-violet-400/25 bg-violet-400/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-violet-200">Promoted</span> : null}
+              {token.verified_team ? <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-emerald-200"><BadgeCheck className="h-3 w-3" />Verified Team</span> : null}
             </div>
             <p className="truncate text-sm text-slate-400">${token.symbol} • {shortAddress(token.address)}</p>
+            <div className="mt-1 flex flex-wrap gap-2 text-[11px] text-slate-400">
+              <span className="rounded-full border border-stroke/70 px-2 py-0.5">{token.category || 'New Launches'}</span>
+              {token.is_claimed ? <span className="rounded-full border border-cyan-400/25 px-2 py-0.5 text-cyan-200">Claimed</span> : null}
+            </div>
           </div>
         </div>
         <div className={`flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs ${positive ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300' : 'border-rose-400/20 bg-rose-400/10 text-rose-300'}`}>
