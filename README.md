@@ -1,62 +1,53 @@
-# Ton Gemz
-Ton Gemz is a TON-focused token discovery site inspired by the structure of SolHunters, with a homepage, listing board, token profile pages, submit flow, and admin dashboard.
+# TonGemz Live Package
 
-## What is included
-- Hero landing page with promoted coins, top upvoted 24H, top gainers 24H, all-time top voted, and recently added sections
-- Explore page with filters for votes, 24H votes, gainers, and recent listings
-- Individual token page with stats and social links
-- Submit coin form
-- Admin dashboard with promote toggle flow
-- Supabase SQL schema and seed file
-- TONAPI + STON.fi enrichment hooks
-- Fallback sample data when env vars are missing
+This package contains both parts of the TonGemz system:
 
-## Stack
-- Next.js 15
-- TypeScript
-- Tailwind CSS
-- Supabase
-- TONAPI
-- STON.fi API
+- `web` in the project root: Next.js site + owner dashboard
+- `telegram-bot-live/`: live Telegram bot for submissions, voting, status checks, banner requests, and admin actions
 
-## Local setup
-1. Copy `.env.example` to `.env.local`
-2. Add your Supabase and TONAPI credentials
-3. Run `npm install`
-4. Run `npm run dev`
+## Deploy setup
 
-## Free deployment
-### Best option
-- Frontend: Vercel free tier
-- Database/Auth: Supabase free tier
+### 1) Website
+Deploy the project root to Vercel.
 
-### Why
-- Vercel is the easiest free deployment for a Next.js app like this
-- Supabase gives you hosted Postgres and auth on a free plan
-- Railway free access changes often, so Vercel + Supabase is the safest free setup right now
+Required env vars:
+- `ADMIN_SECRET`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXT_PUBLIC_SUPABASE_BANNER_BUCKET=banners`
+- `NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET=token-logos`
 
-## Deploy steps
-1. Create a Supabase project
-2. Run `supabase/schema.sql` in the SQL editor
-3. Optionally run `scripts/seed.sql`
-4. Push the project to GitHub
-5. Import the repo into Vercel
-6. Add the env vars from `.env.example`
-7. Deploy
+### 2) Telegram bot
+Deploy `telegram-bot-live` separately on Railway.
 
-## Environment variables
-```env
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-TONAPI_BASE_URL=https://tonapi.io/v2
-TONAPI_KEY=
-STON_API_BASE_URL=https://api.ston.fi/v1
-ADMIN_SECRET=change-me
-```
+Required env vars are inside `telegram-bot-live/.env.example`.
 
-## Notes
-- Without Supabase configured, the app falls back to sample data
-- For better live market data, connect TONAPI and STON.fi
-- This is a clean production starter, not a copyrighted pixel clone
+### 3) Supabase
+Run `supabase/schema.sql` first.
+
+## Live features included
+
+### Website
+- token listings
+- token detail pages
+- voting with 24h cooldown
+- owner boost votes
+- banner ads manager
+- pending/listed/promoted admin flow
+
+### Telegram bot
+- `/start`
+- `/submit`
+- `/vote <contract>`
+- `/prices`
+- `/status <contract>`
+- `/mylisting`
+- `/banner`
+- `/support`
+- admin: `/approve`, `/reject`, `/boost`, `/search`, `/pending`
+
+## Important
+- Website and bot share the same Supabase project.
+- Public users can vote once per token every 24 hours.
+- Owner/admin boost votes stay separate from public votes.
