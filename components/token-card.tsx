@@ -50,7 +50,7 @@ export function TokenCard({ token, compact = false, rank }: { token: ListedToken
           <span className="inline-flex items-center gap-1"><Sparkles className="h-3.5 w-3.5" />{formatCompact(token.admin_boost_votes || 0)} boost</span>
           <span className="text-slate-300">{formatCompact(totalScore)} total</span>
         </div>
-        <Link href={`/token/${token.address}`} className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View <ArrowUpRight className="h-4 w-4" /></Link>
+        <Link href={`/token/${encodeURIComponent(token.address)}`} className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View <ArrowUpRight className="h-4 w-4" /></Link>
       </div>
     </div>
   );
