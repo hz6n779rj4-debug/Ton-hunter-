@@ -9,7 +9,7 @@ import { SectionHeading } from '@/components/section-heading';
 import { formatCompact, formatUsd } from '@/lib/utils';
 
 export default async function HomePage() {
-  const { promoted, todaysBest, allTimeBest, newListings, meme, newLaunches, verifiedTeam } = await getHomepageData();
+  const { promoted, todaysBest, allTimeBest, newListings, verifiedTeam } = await getHomepageData();
   const bannerAd = await getPrimaryBannerAd();
   const stats = {
     totalTokens: newListings.length + Math.max(allTimeBest.length - newListings.length, 0),
@@ -83,16 +83,6 @@ export default async function HomePage() {
       <section className="container-main py-10">
         <SectionHeading title="New Listings" subtitle="Fresh approved TON launches, newest first." action={<Link href="/new-listings" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} />
         <div className="grid gap-4 lg:grid-cols-3">{newListings.map((token) => <TokenCard key={token.id} token={token} />)}</div>
-      </section>
-
-      <section className="container-main py-10">
-        <SectionHeading title="Meme" subtitle="Meme projects currently getting attention on TON." action={<Link href="/explore?category=Meme" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">Explore Meme <ArrowRight className="h-4 w-4" /></Link>} />
-        <div className="grid gap-4 lg:grid-cols-3">{meme.map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div>
-      </section>
-
-      <section className="container-main py-10">
-        <SectionHeading title="New Launches" subtitle="Fresh launch-focused projects building early traction." action={<Link href="/explore?category=New%20Launches" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">Explore launches <ArrowRight className="h-4 w-4" /></Link>} />
-        <div className="grid gap-4 lg:grid-cols-3">{newLaunches.map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div>
       </section>
 
       <section className="container-main py-10">
