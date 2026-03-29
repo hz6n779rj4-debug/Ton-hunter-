@@ -167,6 +167,13 @@ export async function getTokenByAddress(address: string): Promise<ListedToken | 
   if (!normalizedAddress) return null;
 
   if (supabaseAdmin) {
+    const { data: byId } = await supabaseAdmin
+      .from('tokens')
+      .select('*')
+      .eq('id', normalizedAddress)
+      .maybeSingle();
+    if (byId) return enrichToken(normalizeToken(byId as Partial<ListedToken>));
+
     const candidates = Array.from(new Set([
       normalizedAddress,
       normalizedAddress.toUpperCase(),
@@ -185,6 +192,7 @@ export async function getTokenByAddress(address: string): Promise<ListedToken | 
 
   const tokens = await getTokens(true);
   return (
+    tokens.find((token) => String(token.id || '').trim() === normalizedAddress) ||
     tokens.find((token) => decodeURIComponent(String(token.address || '')).trim() === normalizedAddress) ||
     tokens.find((token) => String(token.address || '').trim().toLowerCase() === normalizedAddress.toLowerCase()) ||
     null
