@@ -167,16 +167,28 @@ export async function getTokenByAddress(address: string): Promise<ListedToken | 
   if (!normalizedAddress) return null;
 
   if (supabaseAdmin) {
-    const { data } = await supabaseAdmin
-      .from('tokens')
-      .select('*')
-      .eq('address', normalizedAddress)
-      .maybeSingle();
-    if (data) return enrichToken(normalizeToken(data as Partial<ListedToken>));
+    const candidates = Array.from(new Set([
+      normalizedAddress,
+      normalizedAddress.toUpperCase(),
+      normalizedAddress.toLowerCase(),
+    ]));
+
+    for (const candidate of candidates) {
+      const { data } = await supabaseAdmin
+        .from('tokens')
+        .select('*')
+        .eq('address', candidate)
+        .maybeSingle();
+      if (data) return enrichToken(normalizeToken(data as Partial<ListedToken>));
+    }
   }
 
   const tokens = await getTokens(true);
-  return tokens.find((token) => decodeURIComponent(String(token.address || '')).trim() === normalizedAddress) || null;
+  return (
+    tokens.find((token) => decodeURIComponent(String(token.address || '')).trim() === normalizedAddress) ||
+    tokens.find((token) => String(token.address || '').trim().toLowerCase() === normalizedAddress.toLowerCase()) ||
+    null
+  );
 }
 
 export async function getHomepageData() {
