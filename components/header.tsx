@@ -44,11 +44,16 @@ export async function Header() {
             </Link>
           </div>
 
-          <div className="flex flex-1 px-1 md:px-4 lg:px-8">
-            <form action="/explore" method="get" className="w-full">
-              <div className="mx-auto flex max-w-xl items-center gap-2 rounded-[22px] border border-stroke/80 bg-card/65 px-4 py-3 shadow-soft">
-                <Search className="h-4 w-4 text-slate-400" />
-                <input type="text" name="q" placeholder="Search token, symbol or address" className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500" />
+          <div className="flex flex-1 justify-center px-1 md:px-4 lg:px-8">
+            <form action="/explore" method="get" className="w-full max-w-[180px] sm:max-w-xl">
+              <div className="flex items-center gap-2 rounded-[22px] border border-stroke/80 bg-card/65 px-4 py-3 shadow-soft">
+                <Search className="h-4 w-4 shrink-0 text-slate-400" />
+                <input
+                  type="text"
+                  name="q"
+                  placeholder="Search"
+                  className="w-full bg-transparent text-base text-white outline-none placeholder:text-slate-500"
+                />
               </div>
             </form>
           </div>
