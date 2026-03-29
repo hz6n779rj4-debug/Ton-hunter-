@@ -23,8 +23,8 @@ export function TokenCard({ token, compact = false, rank }: { token: ListedToken
             </div>
             <p className="truncate text-sm text-slate-400">${token.symbol} • {shortAddress(token.address)}</p>
             <div className="mt-1 flex flex-wrap gap-2 text-[11px] text-slate-400">
-              <span className="rounded-full border border-stroke/70 px-2 py-0.5">{token.category || 'New Launches'}</span>
-              {token.is_claimed ? <span className="rounded-full border border-cyan-400/25 px-2 py-0.5 text-cyan-200">Claimed</span> : null}
+              {token.promoted ? <span className="rounded-full border border-violet-400/25 px-2 py-0.5 text-violet-200">Featured</span> : null}
+              {token.verified_team ? <span className="rounded-full border border-emerald-400/25 px-2 py-0.5 text-emerald-200">Verified</span> : null}
             </div>
           </div>
         </div>
