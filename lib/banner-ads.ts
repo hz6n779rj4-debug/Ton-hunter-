@@ -1,6 +1,6 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { supabaseAdmin, storageBucket } from './supabase';
-import { BannerAd } from './types';
+import type { BannerAd } from './types';
 
 const bannerBucket = process.env.NEXT_PUBLIC_SUPABASE_BANNER_BUCKET || storageBucket;
 

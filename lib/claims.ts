@@ -1,5 +1,5 @@
 import { supabaseAdmin } from './supabase';
-import { ClaimRequest } from './types';
+import type { ClaimRequest } from './types';
 
 export async function getClaimRequests(status?: ClaimRequest['status']) {
   if (!supabaseAdmin) return [] as ClaimRequest[];

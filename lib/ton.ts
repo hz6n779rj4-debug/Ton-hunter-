@@ -1,5 +1,39 @@
 import { storageBucket, supabaseAdmin } from './supabase';
-import { ListedToken, TokenCategory } from './types';
+export type TokenCategory = 'Meme' | 'New Launches';
+
+export type ListedToken = {
+  id: string;
+  name: string;
+  symbol: string;
+  address: string;
+  description: string;
+  logo_url: string;
+  website?: string;
+  telegram?: string;
+  twitter?: string;
+  category?: TokenCategory;
+  verified_team?: boolean;
+  is_claimed?: boolean;
+  claimed_by_telegram_id?: string | null;
+  claimed_by_username?: string | null;
+  listed_at: string;
+  promoted: boolean;
+  votes_24h: number;
+  votes_all_time: number;
+  admin_boost_votes: number;
+  holders?: number;
+  price_usd?: number;
+  market_cap_usd?: number;
+  liquidity_usd?: number;
+  volume_24h_usd?: number;
+  change_24h_percent?: number;
+  chart_url?: string;
+  status?: 'pending' | 'approved' | 'rejected';
+  listing_tier?: 'free' | 'fast';
+  promotion_duration_days?: number | null;
+  promotion_expires_at?: string | null;
+  payment_reference?: string | null;
+};
 
 const TONAPI_BASE = process.env.TONAPI_BASE_URL || 'https://tonapi.io/v2';
 const STON_API_BASE = process.env.STON_API_BASE_URL || 'https://api.ston.fi/v1';
@@ -20,7 +54,7 @@ function normalizeCategory(value?: string | null): TokenCategory {
 
 function normalizeToken(token: Partial<ListedToken>): ListedToken {
   return {
-    id: String(token.id || crypto.randomUUID()),
+    id: String(token.id || (globalThis.crypto?.randomUUID?.() || Math.random().toString(36).slice(2))),
     name: String(token.name || 'Unknown Token'),
     symbol: String(token.symbol || 'TON'),
     address: String(token.address || ''),
