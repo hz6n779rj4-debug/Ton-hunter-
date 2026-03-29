@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { createPortal } from 'react-dom';
 import { Menu, X, Rocket, Megaphone, ShieldCheck, LayoutDashboard, Flame, Trophy, PlusCircle, Home, TrendingUp } from 'lucide-react';
 
@@ -56,7 +55,7 @@ export function MobileMenu() {
           <nav className="flex-1 overflow-y-auto px-5 py-5">
             <div className="space-y-3">
               {shortcuts.map(({ href, label, icon: Icon }) => (
-                <Link
+                <a
                   key={href}
                   href={href}
                   onClick={() => setOpen(false)}
@@ -66,7 +65,7 @@ export function MobileMenu() {
                     <Icon className="h-5 w-5" />
                   </span>
                   {label}
-                </Link>
+                </a>
               ))}
             </div>
           </nav>
