@@ -7,10 +7,10 @@ import { Menu, X, Rocket, Megaphone, ShieldCheck, LayoutDashboard, Flame, Trophy
 
 const shortcuts = [
   { href: '/', label: 'Home', icon: Home },
-  { href: '/#trending', label: 'Trending', icon: Flame },
-  { href: '/#new-listings', label: 'New Listings', icon: PlusCircle },
-  { href: '/#top-gainers', label: 'Top Gainers', icon: TrendingUp },
-  { href: '/#all-time-best', label: 'All Time Best', icon: Trophy },
+  { href: '/today-best', label: 'Trending', icon: Flame },
+  { href: '/new-listings', label: 'New Listings', icon: PlusCircle },
+  { href: '/top-gainers', label: 'Top Gainers', icon: TrendingUp },
+  { href: '/all-time-best', label: 'All Time Best', icon: Trophy },
   { href: '/submit', label: 'Apply For Listing', icon: Rocket },
   { href: '/promote', label: 'Promote Coin', icon: Megaphone },
   { href: '/banner-ads', label: 'Book Banner', icon: ShieldCheck },
