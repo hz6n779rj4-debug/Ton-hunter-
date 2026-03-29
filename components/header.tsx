@@ -8,6 +8,7 @@ const links = [
   { href: '/', label: 'Home' },
   { href: '/today-best', label: 'Trending' },
   { href: '/new-listings', label: 'New Listings' },
+  { href: '/top-gainers', label: 'Top Gainers' },
   { href: '/all-time-best', label: 'All Time Best' },
   { href: '/promote', label: 'Promote' },
   { href: '/banner-ads', label: 'Banner Ads' },

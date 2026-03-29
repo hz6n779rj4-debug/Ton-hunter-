@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createPortal } from 'react-dom';
-import { Menu, X, Rocket, Megaphone, ShieldCheck, LayoutDashboard, Flame, Trophy, PlusCircle, Home } from 'lucide-react';
+import { Menu, X, Rocket, Megaphone, ShieldCheck, LayoutDashboard, Flame, Trophy, PlusCircle, Home, TrendingUp } from 'lucide-react';
 
 const shortcuts = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/today-best', label: 'Trending', icon: Flame },
   { href: '/new-listings', label: 'New Listings', icon: PlusCircle },
+  { href: '/top-gainers', label: 'Top Gainers', icon: TrendingUp },
   { href: '/all-time-best', label: 'All Time Best', icon: Trophy },
   { href: '/submit', label: 'Apply For Listing', icon: Rocket },
   { href: '/promote', label: 'Promote Coin', icon: Megaphone },
