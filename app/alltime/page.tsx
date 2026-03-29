@@ -1,2 +1,3 @@
 import { redirect } from 'next/navigation';
-export default function Page() { redirect('/all-time-best'); }
+export const dynamic = 'force-dynamic';
+export default function Page(){ redirect('/all-time-best'); }
