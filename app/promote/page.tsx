@@ -17,7 +17,7 @@ export default async function PromotePage({
           <div className="mb-3 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-cyan-200">
             Promote coin
           </div>
-          <h1 className="text-3xl font-bold text-white sm:text-4xl">Promote your project on TonGemz</h1>
+          <h1 className="text-3xl font-bold text-white sm:text-4xl">Promote your project on KYRON</h1>
           <p className="mt-3 max-w-2xl text-slate-400">
             Buy a promoted placement to get more visibility on the homepage and ranking sections.
             Pick a package, submit your token, then complete payment verification.
