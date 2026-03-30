@@ -1,29 +1,14 @@
-'use client';
-
-import { useMemo, useState } from 'react';
-
-const PAYMENT_WALLET = process.env.NEXT_PUBLIC_PAYMENT_WALLET || 'Set NEXT_PUBLIC_PAYMENT_WALLET';
-
 export default function SubmitPage() {
-  const [listingTier, setListingTier] = useState<'free' | 'fast'>('free');
-  const [paymentRef] = useState(() => `TG-${Math.random().toString(36).slice(2, 10).toUpperCase()}`);
-  const isFast = listingTier === 'fast';
-
-  const helperText = useMemo(() => {
-    if (!isFast) return 'Free listings are reviewed manually before they go live.';
-    return 'Fast listing requires payment before processing. Use the wallet and memo below.';
-  }, [isFast]);
-
   return (
     <section className="container-main overflow-x-hidden py-8 sm:py-10">
       <div className="mx-auto grid max-w-4xl gap-4 lg:grid-cols-[0.78fr_1.22fr]">
         <div className="card min-w-0 p-5 text-left sm:p-6">
           <div className="mb-3 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-cyan-200">Submit Coin</div>
           <h1 className="text-3xl font-bold leading-tight">List your TON project</h1>
-          <p className="mt-3 text-slate-400">Add your project to Ton Gemz for visibility, community voting, and promoted placement.</p>
+          <p className="mt-3 text-slate-400">Add your project to KYRON for visibility, community voting, and promoted placement.</p>
           <div className="mt-8 space-y-4 text-sm text-slate-300">
             <div className="panel p-4"><div className="font-medium text-white">Free listing</div><p className="mt-1 text-slate-400">Sent for review and approved manually before going live.</p></div>
-            <div className="panel p-4"><div className="font-medium text-white">Fast listing</div><p className="mt-1 text-slate-400">10 TON. Pay with the wallet and memo shown on the form before you submit.</p></div>
+            <div className="panel p-4"><div className="font-medium text-white">Fast listing</div><p className="mt-1 text-slate-400">10 TON. Submit details, then pay using the reference shown on the next screen.</p></div>
             <div className="panel p-4"><div className="font-medium text-white">Promoted slots</div><p className="mt-1 text-slate-400">1 day = 5 TON, 3 days = 12 TON, 7 days = 25 TON.</p></div>
           </div>
         </div>
@@ -31,7 +16,7 @@ export default function SubmitPage() {
         <div className="card min-w-0 p-5 text-left sm:p-6">
           <form action="/api/submit" method="post" encType="multipart/form-data" className="grid min-w-0 gap-4">
             <div className="grid gap-4 md:grid-cols-2">
-              <Field label="Project name" name="name" placeholder="Ton Gemz" required />
+              <Field label="Project name" name="name" placeholder="KYRON" required />
               <Field label="Ticker" name="symbol" placeholder="HUNT" required />
             </div>
             <Field label="Token address" name="address" placeholder="EQ..." required />
@@ -42,43 +27,23 @@ export default function SubmitPage() {
               <Field label="X / Twitter" name="twitter" placeholder="https://x.com/..." />
             </div>
             <label className="grid min-w-0 gap-2 text-sm">
+              <span className="text-slate-300">Category</span>
+              <select name="category" className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 text-base outline-none focus:border-cyan-400/50">
+                <option value="Meme">Meme</option>
+                <option value="New Launches">New Launches</option>
+              </select>
+            </label>
+            <label className="grid min-w-0 gap-2 text-sm">
               <span className="text-slate-300">Listing tier</span>
-              <select
-                name="listing_tier"
-                value={listingTier}
-                onChange={(e) => setListingTier(e.target.value as 'free' | 'fast')}
-                className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 text-base outline-none focus:border-cyan-400/50"
-              >
+              <select name="listing_tier" className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 text-base outline-none focus:border-cyan-400/50">
                 <option value="free">Free listing — under review</option>
                 <option value="fast">Fast listing — 10 TON</option>
               </select>
             </label>
-
-            <input type="hidden" name="payment_reference" value={paymentRef} />
-
-            {isFast ? (
-              <div className="grid gap-3 rounded-[24px] border border-cyan-400/20 bg-cyan-400/5 p-4">
-                <div>
-                  <div className="text-xs uppercase tracking-[0.18em] text-cyan-200">Amount</div>
-                  <div className="mt-1 text-2xl font-semibold text-white">10 TON</div>
-                </div>
-                <div>
-                  <div className="text-xs uppercase tracking-[0.18em] text-slate-400">Payment wallet</div>
-                  <div className="mt-1 break-all text-sm text-white">{PAYMENT_WALLET}</div>
-                </div>
-                <div>
-                  <div className="text-xs uppercase tracking-[0.18em] text-slate-400">Memo / reference</div>
-                  <div className="mt-1 break-all text-sm font-medium text-cyan-300">{paymentRef}</div>
-                </div>
-                <p className="text-sm text-slate-300">Send payment before submitting so your fast listing can be matched to this memo immediately.</p>
-              </div>
-            ) : null}
-
             <label className="grid min-w-0 gap-2 text-sm">
               <span className="text-slate-300">Description</span>
               <textarea name="description" rows={6} required className="rounded-2xl border border-stroke bg-slate-950/30 px-4 py-3 text-base outline-none focus:border-cyan-400/50" placeholder="Tell people why your TON project matters." />
             </label>
-            <p className="text-sm text-slate-400">{helperText}</p>
             <button className="mt-2 rounded-full bg-white px-5 py-3 font-medium text-slate-950">Submit listing</button>
           </form>
         </div>
