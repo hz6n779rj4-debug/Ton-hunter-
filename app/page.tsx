@@ -24,14 +24,14 @@ export default async function HomePage() {
             <div className="flex min-h-[230px] flex-col justify-between gap-5 p-5 sm:min-h-[280px] sm:p-7">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full border border-lime-300/40 bg-black/20 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-lime-200"><Megaphone className="h-3.5 w-3.5" /> Banner Ad Slot</div>
-                <h2 className="mt-5 max-w-[16ch] text-4xl font-bold leading-tight text-white sm:text-5xl">{bannerAd?.title || 'Book a TON Gemz banner'}</h2>
+                <h2 className="mt-5 max-w-[16ch] text-4xl font-bold leading-tight text-white sm:text-5xl">{bannerAd?.title || 'Book a KYRON banner'}</h2>
               </div>
 
               <div className="flex items-center gap-4 rounded-[28px] bg-slate-950/18 p-4 sm:p-5">
                 <a href={bannerAd?.target_url || '/banner-ads'} className="block min-w-0 flex-1 overflow-hidden rounded-[22px] border border-white/10 bg-slate-950/20">
                   <img
-                    src={bannerAd?.image_url || '/tongemz-logo.png'}
-                    alt={bannerAd?.title || 'Ton Gemz banner'}
+                    src={bannerAd?.image_url || '/kyron-logo.png'}
+                    alt={bannerAd?.title || 'KYRON banner'}
                     className="h-28 w-full object-cover sm:h-40"
                   />
                 </a>
@@ -52,8 +52,8 @@ export default async function HomePage() {
 
       <section id="trending" className="container-main py-8"><SectionHeading title="Trending" subtitle="Ranked by 24h votes, boost votes, and promoted placement." action={<Link href="/today-best" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} /><div className="grid gap-4 lg:grid-cols-3">{trending.map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div></section>
       <section id="top-gainers" className="container-main py-8"><SectionHeading title="Top Gainers" subtitle="Sorted by strongest positive change, with volume supporting the rank." action={<Link href="/top-gainers" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">Explore <ArrowRight className="h-4 w-4" /></Link>} /><div className="grid gap-4 lg:grid-cols-3">{topGainers.map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div></section>
-      <section id="new-listings" className="container-main py-8"><SectionHeading title="New Listings" subtitle="Fresh approved TON listings, newest first." action={<Link href="/new-listings" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} /><div className="grid gap-4 lg:grid-cols-3">{newListings.map((token) => <TokenCard key={token.id} token={token} />)}</div></section>
-      <section id="all-time-best" className="container-main py-8"><SectionHeading title="All Time Best" subtitle="Projects with the strongest long-term score on Ton Gemz." action={<Link href="/all-time-best" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} /><div className="grid gap-4 lg:grid-cols-3">{allTimeBest.map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div></section>
+      <section id="new-listings" className="container-main py-8"><SectionHeading title="New Listings" subtitle="Fresh approved listings, newest first." action={<Link href="/new-listings" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} /><div className="grid gap-4 lg:grid-cols-3">{newListings.map((token) => <TokenCard key={token.id} token={token} />)}</div></section>
+      <section id="all-time-best" className="container-main py-8"><SectionHeading title="All Time Best" subtitle="Projects with the strongest long-term score on KYRON." action={<Link href="/all-time-best" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">View all <ArrowRight className="h-4 w-4" /></Link>} /><div className="grid gap-4 lg:grid-cols-3">{allTimeBest.map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div></section>
       <section className="container-main py-8"><SectionHeading title="Promoted" subtitle="Featured projects and bought placements." action={<Link href="/promote" className="inline-flex items-center gap-1 text-sm text-cyan-300 hover:text-cyan-200">Promote yours <ArrowRight className="h-4 w-4" /></Link>} /><div className="grid gap-4 lg:grid-cols-3">{promoted.map((token, index) => <TokenCard key={token.id} token={token} rank={index + 1} />)}</div></section>
     </div>
   );
