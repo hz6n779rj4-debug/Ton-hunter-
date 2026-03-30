@@ -142,3 +142,10 @@ create table if not exists public.claim_requests (
 alter table public.claim_requests enable row level security;
 drop policy if exists "service role manages claim requests" on public.claim_requests;
 create policy "service role manages claim requests" on public.claim_requests for all using (false) with check (false);
+
+
+alter table public.tokens add column if not exists votes_24h integer not null default 0;
+alter table public.tokens add column if not exists votes_all_time integer not null default 0;
+
+create unique index if not exists tokens_address_idx on public.tokens(address);
+create index if not exists vote_logs_token_voter_created_idx on public.vote_logs(token_address, voter_key, created_at desc);
