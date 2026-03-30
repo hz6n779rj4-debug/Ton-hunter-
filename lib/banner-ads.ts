@@ -7,8 +7,8 @@ const bannerBucket = process.env.NEXT_PUBLIC_SUPABASE_BANNER_BUCKET || storageBu
 const sampleBannerAds: BannerAd[] = [
   {
     id: 'sample-banner-1',
-    title: 'Book a Ton Gemz banner',
-    image_url: '/tongemz-logo.png',
+    title: 'Book a KYRON banner',
+    image_url: '/kyron-logo.png',
     target_url: '/banner-ads',
     is_active: true,
     starts_at: null,
@@ -22,7 +22,7 @@ function normalizeBannerAd(ad: Partial<BannerAd>): BannerAd {
   return {
     id: String(ad.id || crypto.randomUUID()),
     title: String(ad.title || 'Banner Ad'),
-    image_url: String(ad.image_url || '/tongemz-logo.png'),
+    image_url: String(ad.image_url || '/kyron-logo.png'),
     target_url: String(ad.target_url || '/banner-ads'),
     is_active: Boolean(ad.is_active),
     starts_at: ad.starts_at || null,
