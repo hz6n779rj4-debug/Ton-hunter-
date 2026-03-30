@@ -17,7 +17,7 @@ export default function BannerAdsPage() {
           </div>
           <h1 className="text-4xl font-bold text-white">Book a premium banner slot</h1>
           <p className="mt-4 text-slate-300">
-            Put your project directly inside the Ton Gemz header banner area and drive instant visibility to your token, portal, or campaign.
+            Put your project directly inside the KYRON header banner area and drive instant visibility to your token, portal, or campaign.
           </p>
           <div className="mt-8 space-y-4">
             <Benefit icon={<Megaphone className="h-5 w-5" />} title="Top-of-site exposure" text="Visible before users even reach the listings board." />
