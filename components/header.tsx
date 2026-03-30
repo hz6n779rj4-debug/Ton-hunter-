@@ -18,7 +18,7 @@ const links = [
 export async function Header() {
   const bannerAd = await getPrimaryBannerAd();
   const bannerHref = bannerAd?.target_url || '/banner-ads';
-  const bannerTitle = bannerAd?.title || 'Book a TON Gemz banner';
+  const bannerTitle = bannerAd?.title || 'Book a KYRON banner';
 
   return (
     <header className="sticky top-0 z-40 border-b border-stroke/70 bg-[#040814]/92 backdrop-blur-2xl">
@@ -39,9 +39,9 @@ export async function Header() {
             <div className="md:hidden"><MobileMenu /></div>
             <Link href="/" className="flex min-w-0 items-center gap-2 justify-center">
               <div className="overflow-hidden rounded-2xl border border-cyan-300/25 shadow-[0_0_32px_rgba(34,211,238,0.18)]">
-                <Image src="/tongemz-logo.png" alt="Ton Gemz" width={40} height={40} className="h-9 w-9 object-cover sm:h-10 sm:w-10" />
+                <Image src="/kyron-logo.png" alt="KYRON" width={40} height={40} className="h-9 w-9 object-cover sm:h-10 sm:w-10" />
               </div>
-              <div className="min-w-0 whitespace-nowrap text-lg font-semibold tracking-[0.05em] text-white sm:text-[1.65rem]">TON GEMZ</div>
+              <div className="min-w-0 whitespace-nowrap text-lg font-semibold tracking-[0.05em] text-white sm:text-[1.65rem]">KYRON</div>
             </Link>
           </div>
 

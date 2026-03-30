@@ -39,7 +39,7 @@ export function MobileMenu() {
         <div className="flex h-full flex-col">
           <div className="flex items-start justify-between border-b border-stroke/70 px-5 pb-5 pt-8">
             <div>
-              <div className="text-xs uppercase tracking-[0.34em] text-cyan-200">Ton Gemz</div>
+              <div className="text-xs uppercase tracking-[0.34em] text-cyan-200">KYRON</div>
               <div className="mt-3 text-3xl font-semibold text-white">Menu</div>
             </div>
             <button
