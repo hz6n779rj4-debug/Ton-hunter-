@@ -1,6 +1,6 @@
-# TonGemz Live Package
+# KYRON Live Package
 
-This package contains both parts of the TonGemz system:
+This package contains both parts of the KYRON system:
 
 - `web` in the project root: Next.js site + owner dashboard
 - `telegram-bot-live/`: live Telegram bot for submissions, voting, status checks, banner requests, and admin actions
